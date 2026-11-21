@@ -1,0 +1,36 @@
+name: Feature request
+description: Propose a change or an addition
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check [`docs/known-limitations.md`](../blob/main/docs/known-limitations.md) first — it
+        separates what is genuinely still open from what is a deliberate scope boundary, and
+        [`docs/roadmap.md`](../blob/main/docs/roadmap.md) covers what is planned but not built.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What situation does the stack handle badly today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: How would it be verified
+      description: |
+        What would convince you it works, given that FSM state alone is not evidence? Ground-truth
+        gated runs, a positive control, a matrix cell — whatever fits.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: I have read docs/known-limitations.md and this is not a listed scope boundary

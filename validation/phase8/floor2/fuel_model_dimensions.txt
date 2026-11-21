@@ -1,0 +1,46 @@
+## OpenRobotics/Jersey Barrier: static=true boxes=['4.06542 0.3063 1.143', '4.06542 0.8107 0.064516', '4.06542 0.65 0.1', '4.06542 0.5 0.1', '4.06542 0.5 0.064516', '4.06542 0.5 0.064516'] cyl=[] collision-mesh=[] visual-mesh=[('meshes/jersey_barrier.dae', '')] mass=[]
+## OpenRobotics/Cinder Block: static=(unset -> dynamic!) boxes=['0.43495 0.0339 0.2032', '0.43495 0.0339 0.2032', '0.0339 0.1354 0.203', '0.0339 0.1354 0.203', '0.0339 0.1354 0.203'] cyl=[] collision-mesh=[] visual-mesh=[('model://cinder_block/meshes/cinder_block.dae', '')] mass=['5']
+## OpenRobotics/Cinder block wide: static=(unset -> dynamic!) boxes=['0.387353556 0.387353556 0.0254', '0.387353556 0.387353556 0.0254', '0.387353556 0.020643342 0.092075', '0.387353556 0.020643342 0.092075', '0.387353556 0.0254 0.092075'] cyl=[] collision-mesh=[] visual-mesh=[('model://cinder_block_wide/meshes/cinder_block_wide.dae', '')] mass=['5']
+## OpenRobotics/Cinder Block 2: static=(unset -> dynamic!) boxes=['0.19368008 0.396875 0.0254', '0.19368008 0.396875 0.0254', '0.19368008 0.0254 0.092075', '0.19368008 0.0254 0.092075', '0.19368008 0.0254 0.092075'] cyl=[] collision-mesh=[] visual-mesh=[('model://cinder_block_2/meshes/cinder_block.dae', '')] mass=['5']
+## OpenRobotics/DRC Practice: Block wall: static=true boxes=[] cyl=[] collision-mesh=[('model://drc_practice_block_wall/meshes/block_wall.dae', '')] visual-mesh=[('model://drc_practice_block_wall/meshes/block_wall.dae', '')] mass=[]
+## OpenRobotics/Large Crate: static=false boxes=['0.719255 0.483863 0.490267', '0.757419 0.526001 0.0499125', '0.0560224 0.105551 0.0312474', '0.0560224 0.105551 0.0312474', '0.0560224 0.105551 0.0312474', '0.0560224 0.105551 0.0312474'] cyl=[] collision-mesh=[] visual-mesh=[('meshes/LargeCrate.dae', '')] mass=['8']
+## OpenRobotics/Euro pallet: static=(unset -> dynamic!) boxes=[] cyl=[] collision-mesh=[('model://euro_pallet/meshes/pallet.dae', '0.1 0.1 0.1')] visual-mesh=[('model://euro_pallet/meshes/pallet.dae', '0.1 0.1 0.1')] mass=['20.0']
+## OpenRobotics/Pallet_Standard: static=(unset -> dynamic!) boxes=['0.16 0.095 0.094811', '0.16 0.095 0.094811', '0.16 0.095 0.094811', '0.16 0.095 0.094811', '0.16 0.095 0.094811', '0.16 0.095 0.094811'] cyl=[] collision-mesh=[] visual-mesh=[('base_visual.glb', '')] mass=[]
+## OpenRobotics/Cable_Spool: static=(unset -> dynamic!) boxes=[] cyl=[('0.5', '0.05'), ('0.5', '0.05')] collision-mesh=[] visual-mesh=[('base_visual.glb', '')] mass=[]
+## OpenRobotics/55gal_Drum: static=(unset -> dynamic!) boxes=[] cyl=[('0.297295', '0.862208')] collision-mesh=[] visual-mesh=[('base_visual.glb', '')] mass=[]
+## OpenRobotics/Toolbox: static=true boxes=[] cyl=[] collision-mesh=[('model://Toolbox/meshes/Toolbox.dae', '')] visual-mesh=[('model://Toolbox/meshes/Toolbox.dae', '')] mass=[]
+## OpenRobotics/Fire Extinguisher: static=true boxes=[] cyl=[] collision-mesh=[('meshes/extinguisher.dae', '')] visual-mesh=[('meshes/extinguisher.dae', '')] mass=[]
+## OpenRobotics/Handtruck_01: static=(unset -> dynamic!) boxes=['0.19 0.35 0.004044', '0.326971 0.036011 0.013351', '0.042673 0.065363 0.050016', '0.042673 0.065363 0.050016', '0.027884 0.013984 0.29874', '0.107613 0.030678 0.007069'] cyl=[('0.016', '0.73'), ('0.016', '0.73')] collision-mesh=[] visual-mesh=[('base_visual.glb', '')] mass=[]
+## OpenRobotics/Hand_Cart: static=(unset -> dynamic!) boxes=['1.0 2.0 0.084664', '0.071417 0.449821 0.371456', '0.071417 0.449821 0.371456', '0.052427 0.081425 0.246141', '0.052427 0.081425 0.246141', '0.314733 0.488329 0.06'] cyl=[('0.25', '0.225243'), ('0.25', '0.225242')] collision-mesh=[] visual-mesh=[('base_visual.glb', '')] mass=[]
+## OpenRobotics/Ladder 60 Degrees 1 Handrails: static=true boxes=['  0.9  0.1016  0.0381  ', '  0.9  0.1016  0.0381  ', '  0.9  0.1016  0.0381  ', '  0.9  0.1016  0.0381  ', '  0.9  0.1016  0.0381  ', '  0.9  0.1016  0.0381  '] cyl=[('0.02413', '4.171281292110204'), ('0.02413', '0.5412177826491069')] collision-mesh=[] visual-mesh=[] mass=[' 9.7548192']
+## OpenRobotics/DRC Practice: 2x4 Lumber: static=(unset -> dynamic!) boxes=['1.2192 0.038 0.0888'] cyl=[] collision-mesh=[('model://drc_practice_2x4/meshes/2x4x48.dae', '')] visual-mesh=[('model://drc_practice_2x4/meshes/2x4x48.dae', '')] mass=['1.4111']
+## OpenRobotics/DRC Practice: 2x6 Lumber: static=(unset -> dynamic!) boxes=['1.2192 0.038 0.1396'] cyl=[] collision-mesh=[('model://drc_practice_2x6/meshes/2x6x48.dae', '')] visual-mesh=[('model://drc_practice_2x6/meshes/2x6x48.dae', '')] mass=['2.22']
+## OpenRobotics/DRC Practice: 4x4x20 Lumber: static=(unset -> dynamic!) boxes=['0.508 0.0888 0.0888'] cyl=[] collision-mesh=[('model://drc_practice_4x4x20/meshes/4x4x20.dae', '')] visual-mesh=[('model://drc_practice_4x4x20/meshes/4x4x20.dae', '')] mass=['1.37']
+## OpenRobotics/DRC Practice: 4x4x40 Lumber: static=(unset -> dynamic!) boxes=['1.016 0.0888 0.0888'] cyl=[] collision-mesh=[('model://drc_practice_4x4x40/meshes/4x4x40.dae', '')] visual-mesh=[('model://drc_practice_4x4x40/meshes/4x4x40.dae', '')] mass=['2.74']
+## OpenRobotics/Construction Barrel: static=(unset -> dynamic!) boxes=[] cyl=[] collision-mesh=[('model://construction_barrel/meshes/construction_barrel.dae', '')] visual-mesh=[('model://construction_barrel/meshes/construction_barrel.dae', '')] mass=['500']
+## OpenRobotics/Construction Cone: static=(unset -> dynamic!) boxes=[] cyl=[] collision-mesh=[] visual-mesh=[] mass=[]
+## TjalleDijkstra/IBeam: static=true boxes=[] cyl=[] collision-mesh=[('model://IBeam/meshes/IBeam.stl', '0.001 0.001 0.001')] visual-mesh=[('model://IBeam/meshes/IBeam.stl', '0.001 0.001 0.001')] mass=[]
+## OpenRobotics/Bollard: static=(unset -> dynamic!) boxes=[] cyl=[] collision-mesh=[('model://Bollard/meshes/Bollard.glb', '')] visual-mesh=[('model://Bollard/meshes/Bollard.glb', '')] mass=[]
+## OpenRobotics/Handrail: static=true boxes=[] cyl=[] collision-mesh=[('model://Handrail/meshes/Handrail.obj', '0.01 0.01 0.01')] visual-mesh=[('model://Handrail/meshes/Handrail.obj', '0.01 0.01 0.01')] mass=[]
+## OpenRobotics/Extinguisher cabinet: static=true boxes=[] cyl=[] collision-mesh=[('model://Extinguisher/meshes/box.obj', '')] visual-mesh=[('model://Extinguisher/meshes/box.obj', '')] mass=[]
+## OpenRobotics/Stop Sign: static=true boxes=[] cyl=[] collision-mesh=[('model://stop_sign/meshes/stop_sign.dae', '')] visual-mesh=[('model://stop_sign/meshes/stop_sign.dae', '')] mass=[]
+## athackst/fence: static=true boxes=['0.1 5. 1.83'] cyl=[] collision-mesh=[] visual-mesh=[] mass=[]
+## OpenRobotics/Pallet_Jack: static=(unset -> dynamic!) boxes=['0.14611 1.126207 0.038377', '0.14611 1.126207 0.038377', '0.087998 0.202116 0.080232', '0.087998 0.202116 0.080232', '0.432001 0.1 0.063947', '0.385004 0.205222 0.079693'] cyl=[('0.0936', '0.210597')] collision-mesh=[] visual-mesh=[('base_visual.glb', '')] mass=[]
+## OpenRobotics/DRC Practice: Truss: static=(unset -> dynamic!) boxes=['0.25 1.5 0.25'] cyl=[] collision-mesh=[('model://drc_practice_truss/meshes/truss.dae', '')] visual-mesh=[('model://drc_practice_truss/meshes/truss.dae', '')] mass=['20.7307']
+
+######## mesh bounding boxes (parsed from the real mesh files)
+OpenRobotics/Construction Barrel    bbox size x 1.020 y 1.020 z 1.550 m  (min z +0.000)
+OpenRobotics/Toolbox: no positions parsed
+OpenRobotics/Fire Extinguisher: no positions parsed
+OpenRobotics/Cinder Block           bbox size x 0.435 y 0.203 z 0.203 m  (min z +0.000)
+OpenRobotics/Euro pallet            bbox size x 0.795 y 1.200 z 0.144 m  (min z +0.000)
+OpenRobotics/Jersey Barrier         bbox size x 4.066 y 0.813 z 1.143 m  (min z +0.000)
+OpenRobotics/Large Crate: no positions parsed
+TjalleDijkstra/IBeam                  bbox size x 10.000 y 0.200 z 0.300 m  (min z -0.150)
+OpenRobotics/Construction Cone      bbox size x 0.050 y 0.050 z 0.109 m  (min z +0.000)
+
+######## origin offsets of the assets used for Floor 2 (mesh bbox min/max z and centre x,y, from the real files)
+DRC Practice: 2x4 Lumber       bbox 1.248 x 0.066 x 0.116   min (-0.025,-0.025,-0.025) max (+1.223,+0.040,+0.090)
+DRC Practice: 4x4x40 Lumber    bbox 1.016 x 0.490 x 0.503   min (-0.508,-0.252,-0.252) max (+0.508,+0.239,+0.252)
+DRC Practice: 4x4x20 Lumber    bbox 0.508 x 0.245 x 0.219   min (-0.254,-0.123,-0.110) max (+0.254,+0.123,+0.110)
+Large Crate                    bbox 1.081 x 0.554 x 0.490   min (-0.540,-0.284,+0.000) max (+0.540,+0.271,+0.490)

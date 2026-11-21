@@ -1,0 +1,15 @@
+254 logged ground-truth poses (1601 interpolated points); on Floor 2: 199 pts; closest objects:
+     1.98 m  floor2_delivery_marker  (floor2)
+     2.17 m  ramp2_guardrail_north  (floor2)
+     2.17 m  ramp2_guardrail_south  (floor2)
+     2.87 m  floor2_jersey_barrier_north  (floor2)
+     2.87 m  floor2_jersey_barrier_south  (floor2)
+     2.87 m  floor2_guardrail_west  (floor2)
+     3.00 m  floor2_pallet_a  (floor2)
+     3.00 m  floor2_pallet_b  (floor2)
+     3.17 m  floor2_block_a_000  (floor2)
+     3.17 m  floor2_block_a_010  (floor2)
+     3.17 m  floor2_block_a_020  (floor2)
+     3.17 m  floor2_block_a_100  (floor2)
+
+MIN CLEARANCE 1.98 m to floor2_delivery_marker  -> PASS (>= 1.5 m buffer)

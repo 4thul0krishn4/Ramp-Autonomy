@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ramp_autonomy_bringup</name>
+  <version>0.1.0</version>
+  <description>Single-launch entry point tying together the ramp world, robot, and all autonomy nodes.</description>
+  <maintainer email="kunal780954@gmail.com">Kunal Yadav</maintainer>
+  <license>Apache-2.0</license>
+
+  <exec_depend>ramp_autonomy_gazebo</exec_depend>
+  <exec_depend>ramp_autonomy_description</exec_depend>
+  <exec_depend>ramp_autonomy_nav</exec_depend>
+  <exec_depend>ramp_autonomy_perception</exec_depend>
+  <exec_depend>ramp_autonomy_control</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>nav2_controller</exec_depend>
+  <exec_depend>nav2_lifecycle_manager</exec_depend>
+  <exec_depend>nav2_velocity_smoother</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

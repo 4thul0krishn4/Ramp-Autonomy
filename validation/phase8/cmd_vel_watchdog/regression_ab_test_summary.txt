@@ -1,0 +1,21 @@
+A/B comparison: HALT count across repeated full ascend/crest-cross runs
+(world:=sharp_lowfriction_TESTONLY, unloaded), to check whether
+cmd_vel_watchdog_node.py changes HALT behavior vs. the old direct
+velocity_smoother->actuation pipeline.
+
+Old pipeline (no watchdog node in the launch graph):        4, 1, 0 HALTs
+New pipeline v1 (instant-zero-on-HALT watchdog):            35, 1, 1 HALTs  <- one severe outlier
+New pipeline v2 (ramped-to-zero watchdog, rate-matched to
+  robot.urdf.xacro's own DiffDrive accel/decel rating):      1, 4, 0 HALTs
+
+v1's instant, un-ramped zero (teleporting the commanded velocity to
+exactly zero in one tick, an effectively-infinite deceleration spike)
+was found live to occasionally trigger its own fresh wheel-slip/margin
+event right as the robot tried to recover from the last one - something
+the old pipeline never does, since MPPI/velocity_smoother always
+decelerate within their own configured accel/decel limits. v2 ramps at
+the platform's own rated max deceleration instead of teleporting,
+matching the old pipeline's HALT-count distribution in this comparison
+while still independently stopping the robot in ~120 ms even when the
+reconfiguration path is completely dead (see
+stuck_reconfiguration_test_result.log).

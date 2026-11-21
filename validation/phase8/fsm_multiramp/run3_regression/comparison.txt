@@ -1,0 +1,14 @@
+=== loaded ===
+  OLD FSM (floor2 verification)    leg-3 verification 110%  HALTs 14  min margin 0.463  max slip 6.998  descent max|GT y| 4.076 m  final GT (2.1174804446359876, -0.8792633203885748, 0.2750000682230818)
+                                   legs ok: [('leg 1', 'True'), ('leg 2 (ramp ascent)', 'True'), ('leg 4 (return)', 'True')]
+                                   non-HALT /ramp_state sequence (1 Hz CSV): APPROACH > TRANSITION > EXIT > DESCENT > EXIT
+  NEW FSM (this session)           leg-3 verification 108%  HALTs 19  min margin 0.463  max slip 4.485  descent max|GT y| 4.057 m  final GT (2.0642473683892435, 0.6693031180514419, 0.2750001269258759)
+                                   legs ok: [('leg 1', 'True'), ('leg 2 (ramp ascent)', 'True'), ('leg 4 (return)', 'True')]
+                                   non-HALT /ramp_state sequence (1 Hz CSV): APPROACH > TRANSITION > EXIT > DESCENT > EXIT
+=== unloaded ===
+  OLD FSM (floor2 verification)    leg-3 verification 110%  HALTs 34  min margin 0.872  max slip 11.690  descent max|GT y| 3.896 m  final GT (1.9526645634748663, -0.10226284639170108, 0.27500006986554293)
+                                   legs ok: [('leg 1', 'True'), ('leg 2 (ramp ascent)', 'True'), ('leg 4 (return)', 'True')]
+                                   non-HALT /ramp_state sequence (1 Hz CSV): APPROACH > TRANSITION > EXIT > DESCENT > EXIT
+  NEW FSM (this session)           leg-3 verification 109%  HALTs 21  min margin 0.872  max slip 3.764  descent max|GT y| 4.005 m  final GT (2.039409411055993, 0.1475061208825729, 0.27500007207768823)
+                                   legs ok: [('leg 1', 'True'), ('leg 2 (ramp ascent)', 'True'), ('leg 4 (return)', 'True')]
+                                   non-HALT /ramp_state sequence (1 Hz CSV): APPROACH > TRANSITION > EXIT > DESCENT > EXIT

@@ -1,0 +1,10 @@
+== lean1 (353 authored visuals, 58 Fuel) real-time
+   RTF samples: 0.65 0.51 0.75 0.66 0.54 0.57 0.67 0.37 | median 0.61
+== lean1 max-speed
+   RTF samples: 0.68 0.61 0.37 0.64 0.56 0.67 0.67 0.68 | median 0.65
+== lean1 with authored collisions removed, max-speed
+   RTF samples: 0.69 0.82 0.85 0.70 0.86 0.90 0.85 0.66 | median 0.83
+== lean2 (353 authored visuals, 61 authored collisions, 58 Fuel with stripped collisions) max-speed
+   RTF samples: 1.11 0.83 1.28 1.04 1.33 1.16 0.73 1.12 | median 1.12
+== lean2 real-time
+   RTF samples: 1.28 1.32 1.09 1.00 1.00 1.00 1.00 0.78 | median 1.00

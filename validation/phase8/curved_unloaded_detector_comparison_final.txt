@@ -1,0 +1,17 @@
+
+FIXED detector, CONTROL batch run AFTER the original-detector runs (n=4)
+   #  GT max|y| m                                 GT verdict  overall  HALTs  stall/slip/margin  min RTF
+   1         3.00   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL      5             3/35/2    0.991  (RTF < 0.995)
+   2         3.85   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL     10            10/29/1    0.994  (RTF < 0.995)
+   3         2.02   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL     11             6/43/0    0.997
+   4         2.57   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL     18             3/46/0    0.998
+
+fixed before the swap (n=6): fail 6/6, mean 2.25 | fixed after the swap (control, n=4): fail 4/4, mean 2.86 range 2.02-3.85
+order-effect check, fixed-before vs fixed-after: Fisher p = 1.000, permutation p on magnitude = 0.119
+
+ALL fixed-detector runs (n=10): fail 10/10 (Wilson 95% 72-100%), mean 2.49 m sd 0.63 range 1.74-3.85
+ORIGINAL detector controlled runs (n=6): fail 0/6 (Wilson 95% 0-39%), mean 0.90 m sd 0.26 range 0.39-1.11
+PRIMARY comparison, all fixed (n=10) vs original (n=6): Fisher p = 0.00012 | permutation p (magnitude) = 0.00012
+mean difference (original - fixed) = -1.59 m, bootstrap 95% CI [-2.03, -1.20]
+stall-latch entries: fixed(all) mean 4.9 | original mean 3.2;  slip entries: fixed(all) mean 38.2 | original mean 17.7
+min RTF over all 16 runs: 0.991 ; any starved: False

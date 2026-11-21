@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ramp_autonomy_nav</name>
+  <version>0.1.0</version>
+  <description>Ramp traversal state machine (approach/ascent/transition/descent/exit/halt) and MPPI slope-mode cost function integration.</description>
+  <maintainer email="kunal780954@gmail.com">Kunal Yadav</maintainer>
+  <license>Apache-2.0</license>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>ramp_autonomy_msgs</depend>
+  <depend>nav2_common</depend>
+  <depend>rcl_interfaces</depend>
+  <depend>ament_index_python</depend>
+  <depend>python3-yaml</depend>
+  <exec_depend>nav2_controller</exec_depend>
+  <exec_depend>nav2_mppi_controller</exec_depend>
+  <exec_depend>nav2_costmap_2d</exec_depend>
+  <exec_depend>nav2_lifecycle_manager</exec_depend>
+  <exec_depend>nav2_velocity_smoother</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

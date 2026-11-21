@@ -1,0 +1,21 @@
+A one ramp: up, (flat), turn, down
+    old: APPROACH > ASCENT > TRANSITION > EXIT > DESCENT > EXIT
+    new: APPROACH > ASCENT > TRANSITION > EXIT > DESCENT > EXIT   as expected
+B TWO ramps: up ramp1, up ramp2, down ramp2, down ramp1
+    old: APPROACH > ASCENT > TRANSITION > EXIT > DESCENT > EXIT > DESCENT > EXIT > DESCENT > EXIT
+    new: APPROACH > ASCENT > TRANSITION > EXIT > ASCENT > TRANSITION > EXIT > DESCENT > EXIT > DESCENT > EXIT   as expected
+C up, down, up again (second climb after a descent)
+    old: APPROACH > ASCENT > TRANSITION > EXIT > DESCENT > EXIT > DESCENT > EXIT
+    new: APPROACH > ASCENT > TRANSITION > EXIT > DESCENT > EXIT > ASCENT > TRANSITION > EXIT   as expected
+D reversing DOWN a ramp facing uphill (pitch -16, vx -0.3) from flat
+    old: APPROACH > ASCENT
+    new: APPROACH > DESCENT   as expected
+E reversing UP a ramp facing downhill (pitch +16, vx -0.3) from flat
+    old: APPROACH > ASCENT
+    new: APPROACH > ASCENT   as expected
+F no odometry yet (vx None): historical forward assumption, pitch -16 from flat
+    old: APPROACH > ASCENT
+    new: APPROACH > ASCENT   as expected
+G HALT in the middle of the SECOND ramp climb recovers to ASCENT
+    new: APPROACH > ASCENT > TRANSITION > EXIT > ASCENT > HALT > ASCENT > TRANSITION > EXIT   as expected
+ALL SCENARIOS AS EXPECTED

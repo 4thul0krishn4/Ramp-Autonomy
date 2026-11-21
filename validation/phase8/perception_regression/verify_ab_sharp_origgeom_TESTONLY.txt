@@ -1,0 +1,1 @@
+verify OK: {'n_gz_sim': 1, 'n_ros2_launch': 1, 'duplicate_nodes': {}, 'load1': 1.76, 'rtf': 0.999, 'n_procs': 16, 'ok': True}

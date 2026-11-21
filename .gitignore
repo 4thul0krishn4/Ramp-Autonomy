@@ -1,0 +1,86 @@
+# ---- ROS 2 / colcon build output ----
+build/
+install/
+log/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ---- Editors / OS ----
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# ---------------------------------------------------------------------------
+# Recorded run data and captured media
+#
+# The validation suite and the GUI capture scripts write several GB of raw
+# per-run output: rosbags, per-topic CSV/JSON traces, node and launch logs,
+# and full-session screen recordings. All of it is reproducible by re-running
+# the harness, so this repository tracks the scripts, the analysis code and
+# the written-up results rather than the raw output.
+#
+# Videos of the round trips are attached to the GitHub release instead of
+# committed. See the "See it run" section of README.md.
+# ---------------------------------------------------------------------------
+
+# Screen recordings and rosbags
+*.mp4
+*.gif
+*.mcap
+*.mcap.zstd
+*.db3
+*.bag
+
+# Raw numeric traces and per-run dumps
+*.npz
+*.csv
+*.json
+*.out
+*.err
+
+# Node, launch and driver logs from recorded sessions
+*.log
+
+# Whole-directory per-run output
+recordings/**/data/
+validation/phase8/**/*_logs/
+visualization/doc_captures/
+visualization/gui_diagnosis/
+visualization/live_run/
+
+# Point-in-time snapshot copies kept beside the live file during development.
+# Git history is the record for these.
+*.ORIGINAL
+*.BEFORE_*
+*.HEAVY.*
+
+# ---- Force-tracked exceptions to the rules above ----
+# Everything under docs/images/ is documentation imagery embedded in the docs,
+# including the two animated GIFs in docs/retrospective.md. The *.gif and *.png
+# rules above are aimed at captured session output, not at these.
+!docs/images/**
+
+# The authored two-floor layout, consumed by the world generator and the
+# clearance checks. Small, and it documents the world's geometry.
+!validation/phase8/floor2/floor2_layout.json
+
+# ---- Further per-run output (same reasoning as above) ----
+# Per-run verification dumps written by the harness for every single run.
+*_verify.txt
+*_health.txt
+*_stdout.txt
+
+# xacro expansions captured per configuration during the mesh/payload sweeps
+validation/phase8/mesh_swap/**/*.urdf
+*.urdf.xacro.fixed
+
+# Harness completion markers
+*.done
+**/gui_recordings/**/data/

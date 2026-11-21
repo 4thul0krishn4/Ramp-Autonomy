@@ -1,0 +1,10 @@
+arm                     fails  mean | vs FIXED: Fisher p / permutation p | vs ORIGINAL: Fisher p / permutation p
+ORIGINAL               0/6    0.90 |     0.0001 /   0.0001          |        nan /      nan
+HOLD (pause)           2/6    1.59 |     0.0082 /   0.0331          |     0.4545 /   0.1039
+CEILING (no pause)     5/5    2.19 |     1.0000 /   0.3410          |     0.0022 /   0.0022
+RESET (no pause)       5/5    2.23 |     1.0000 /   0.4496          |     0.0022 /   0.0022
+FIXED                  10/10   2.49 |        nan /      nan          |     0.0001 /   0.0001
+
+HOLD: fraction of the fixed->original gap closed = (2.49 - 1.59) / (2.49 - 0.90) = 57%
+CEILING: 19% of the gap;  RESET: 17% of the gap
+HOLD - FIXED mean difference -0.90 m, bootstrap 95% CI [-1.62, -0.13]

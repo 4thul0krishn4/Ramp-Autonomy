@@ -1,0 +1,72 @@
+# ekf.yaml
+#
+# robot_localization EKF fusing wheel odometry (/odom, from gz-sim's
+# DiffDrive plugin) with the IMU (/imu) into /odometry/filtered, and
+# publishing the odom -> base_footprint TF itself (replacing gz-sim's own
+# raw TF broadcast - see ramp_world.launch.py, which no longer bridges
+# gz's /tf into ROS2 for exactly this reason: two publishers of the same
+# transform would race/conflict).
+#
+# Root cause this exists to fix (see validation/phase8/construction_site_
+# descent/ and docs/construction_site_design.md's "Live traversal-test
+# results"): wheel odometry's YAW is corrupted by wheel slip under the
+# differential wheel speeds any turn requires - confirmed live, ground
+# truth diverges from odom's own belief throughout a turn, not just a
+# fast open-loop spin. The IMU's gyro-based orientation is not subject to
+# wheel slip at all. So this config deliberately fuses POSITION + LINEAR
+# velocity from wheel odom (that part of wheel odometry is fine - it's
+# specifically the rotational estimate that's unreliable), and fuses
+# ORIENTATION + ANGULAR velocity from the IMU instead of from wheel odom.
+# This is the standard robot_localization pattern for exactly this
+# failure mode, not a bespoke design.
+ekf_filter_node:
+  ros__parameters:
+    use_sim_time: true
+    frequency: 30.0
+    two_d_mode: false
+    publish_tf: true
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_footprint
+    # world_frame = odom (not map): this project has no map/AMCL layer
+    # (see nav2_params.yaml's own scoping comment) - the EKF's only job is
+    # to replace the odom -> base_footprint link with a fused estimate.
+    world_frame: odom
+
+    odom0: odom
+    # [x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az]
+    # IMPORTANT: do NOT fuse wheel odom's absolute x/y POSITION here, only
+    # its body-frame linear VELOCITY (vx, vy). Live validation
+    # (validation/phase8/ekf_validation/) caught this the first time
+    # around: wheel odom's own x/y position is itself integrated using
+    # wheel odom's OWN internal yaw estimate - the exact quantity this EKF
+    # exists to not trust. Fusing that position directly re-imports the
+    # same corruption one step removed, even though the fused ORIENTATION
+    # (from the IMU, below) was already tracking ground truth almost
+    # exactly. Fusing only the body-frame velocity lets the EKF integrate
+    # its own position using its OWN fused (IMU-corrected) orientation to
+    # rotate that velocity into the world frame - the standard,
+    # textbook-correct pattern for this exact failure mode.
+    odom0_config: [false, false, false,
+                   false, false, false,
+                   true,  true,  false,
+                   false, false, false,
+                   false, false, false]
+    odom0_differential: false
+    odom0_relative: false
+    odom0_queue_size: 10
+
+    imu0: imu
+    # Trust the IMU's absolute orientation (roll, pitch, yaw - gyro/
+    # accelerometer-derived, not wheel-slip-dependent) and angular
+    # velocity. No linear acceleration fusion (not needed for what this
+    # EKF is being used for - Nav2's 2D planar controller/costmap).
+    imu0_config: [false, false, false,
+                  true,  true,  true,
+                  false, false, false,
+                  true,  true,  true,
+                  false, false, false]
+    imu0_differential: false
+    imu0_relative: false
+    imu0_queue_size: 10
+    imu0_remove_gravitational_acceleration: true

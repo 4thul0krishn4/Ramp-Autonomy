@@ -1,0 +1,42 @@
+
+################ detector: old ################
+NORMAL sessions (n=2): every latch is scored against ground truth
+  session                             leg3 s  ok  latches  false  leg3 latches  leg3 false  leg3 stalled s
+  old_normal_loaded_21.npz               180   T       16     16            10          10              90
+  old_normal_unloaded_22.npz             190   T       19     19            11          11              95
+  mean leg-3 duration (s)                     185.1  (sd 7.2)
+  mean latches / session                       17.5  (sd 2.1)
+  mean FALSE latches / session                 17.5  (sd 2.1)
+  mean FALSE latches in leg 3 / session        10.5  (sd 0.7)
+  mean seconds stall-latched in leg 3          92.9  (sd 3.6)
+  fraction of leg-3 time spent stall-latched: 50.2%   completed: 2/2
+  FALSE latches by phase / motion type (all sessions): leg1 straight: 6, leg2 straight: 8, leg3-descent straight: 3, leg3-platform rotating: 14, leg3-platform straight: 4
+FREEZE sessions (n=3); positive control = commanded-and-blocked episodes (ground truth)
+  event           detected/scorable    95% Wilson CI   latency s (median / max)
+  straight_raw            3/3           44-100%                  5.0 / 5.0   (spawn failures 0)
+  arc                     6/6           61-100%                  2.4 / 2.8   (spawn failures 0)
+  taper                   5/5           57-100%                  4.9 / 5.0   (spawn failures 0)
+  ALL                    14/14          78-100%      justified latches total: 13
+
+################ detector: new ################
+NORMAL sessions (n=6): every latch is scored against ground truth
+  session                             leg3 s  ok  latches  false  leg3 latches  leg3 false  leg3 stalled s
+  new_normal_loaded_31.npz               120   T       10     10             3           3              30
+  new_normal_loaded_33.npz               114   T       10     10             3           3              30
+  new_normal_loaded_35.npz               118   T       10     10             4           4              30
+  new_normal_unloaded_32.npz             127   T       14     14             5           5              35
+  new_normal_unloaded_34.npz             134   T       14     14             6           6              42
+  new_normal_unloaded_36.npz             126   T       15     15             5           5              36
+  mean leg-3 duration (s)                     123.2  (sd 7.3)
+  mean latches / session                       12.2  (sd 2.4)
+  mean FALSE latches / session                 12.2  (sd 2.4)
+  mean FALSE latches in leg 3 / session         4.3  (sd 1.2)
+  mean seconds stall-latched in leg 3          33.8  (sd 4.6)
+  fraction of leg-3 time spent stall-latched: 27.4%   completed: 6/6
+  FALSE latches by phase / motion type (all sessions): leg1 straight: 23, leg2 straight: 24, leg3-descent straight: 8, leg3-platform straight: 18
+FREEZE sessions (n=6); positive control = commanded-and-blocked episodes (ground truth)
+  event           detected/scorable    95% Wilson CI   latency s (median / max)
+  straight_raw            6/6           61-100%                  5.0 / 5.0   (spawn failures 0)
+  arc                     6/6           61-100%                  4.2 / 5.0   (spawn failures 0)
+  taper                   6/6           61-100%                  4.8 / 5.0   (spawn failures 0)
+  ALL                    18/18          82-100%      justified latches total: 10

@@ -1,0 +1,16 @@
+single 0.05 s spike to 1.0 (onset artefact)
+    old: HALT at 0.26 s   new: no HALT   as expected
+0.10 s spike (decel artefact, longest seen)
+    old: HALT at 0.26 s   new: no HALT   as expected
+20 onset artefacts, 0.05 s on / 0.10 s off (loop feed)
+    old: HALT at 0.01 s   new: no HALT   as expected
+sustained 0.30 s above threshold
+    old: HALT at 0.26 s   new: HALT at 0.5 s   as expected
+        HALT latency after the metric first exceeded 0.5: 0.25 s (persistence 0.25 s)
+sustained 2 s (real tracking failure)
+    old: HALT at 0.26 s   new: HALT at 0.5 s   as expected
+        HALT latency after the metric first exceeded 0.5: 0.25 s (persistence 0.25 s)
+just under the persistence (0.20 s)
+    old: HALT at 0.26 s   new: no HALT   as expected
+margin HALT still immediate: True; stall HALT still immediate: True
+ALL AS EXPECTED

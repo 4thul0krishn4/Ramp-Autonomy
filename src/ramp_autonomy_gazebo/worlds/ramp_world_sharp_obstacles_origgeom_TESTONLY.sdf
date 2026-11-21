@@ -1,0 +1,226 @@
+<?xml version="1.0" ?>
+<!--
+  ramp_world_sharp.sdf
+
+  Flat -> ramp -> flat world with a SHARP break-point transition (no
+  fillet at the slope changes). Used to stress-test break-point
+  detection and speed reduction at the transition, and as the
+  "hard mode" counterpart to ramp_world_curved.sdf.
+
+
+  TEST-ONLY variant of ramp_world_sharp.sdf, used to verify the phase 8
+  360 deg obstacle-ring LiDAR (robot.urdf.xacro's obstacle_lidar_link,
+  /scan_360) live: adds two static obstacle boxes near the robot's
+  spawn pose (x=1.0 y=0.0, facing +X) that the OLD single rolled LiDAR
+  (/scan, ramp_classifier_node.py's sensor) could never have seen -
+  test_obstacle_side sits directly to the robot's right (-Y), well
+  outside the rolled sensor's fore-aft-only scan plane; test_obstacle_
+  behind sits directly behind it (-X), which the rolled sensor also
+  never looks toward (its cone is forward-only, see
+  ramp_classifier_node.py's FORWARD_CONE_MIN/MAX_DEG). Neither
+  obstacle is anywhere near the ramp's break points (x=4.0/7.5), so
+  ramp perception should be completely unaffected - this world exists
+  specifically to prove that live, not just the new sensor's own
+  detection. Not referenced by any launch file default.
+
+  Layout (looking along +X, robot starts at the origin facing +X):
+
+      Zone A            Zone B (ramp)         Zone C
+   flat approach      inclined section      flat exit
+  [===== 4.0 m =====][====== 3.5 m ======][===== 4.0 m =====]
+  x: 0.0 .. 4.0        x: 4.0 .. 7.5        x: 7.5 .. 11.5
+  z: 0.0                z: 0.0 up to 1.0      z: 1.0
+
+  RAMP_ANGLE_DEG is the single source of truth for slope angle -
+  change it here and the derived length/height below stay consistent
+  as long as you recompute RAMP_LENGTH = RAMP_RISE / sin(angle) and
+  RAMP_HORIZ = RAMP_RISE / tan(angle). Defaults: 16 deg, 1.0 m rise.
+
+  Friction is deliberately different per zone (see <surface> blocks)
+  so slip-detection logic has something real to react to:
+    - Zone A / C: dry concrete-like friction (mu ~ 0.9)
+    - Zone B ramp surface: slightly lower, "dusty" friction (mu ~ 0.55)
+      to make ascent/descent slip a realistic risk, not a formality.
+-->
+<sdf version="1.9">
+  <!-- CONTROL WORLD (crest-freeze diagnosis): ORIGINAL UNFIXED ramp geometry (0.05 m steps at the crest and ramp foot); exists only for A/B comparison against the corrected geometry. -->
+  <world name="ramp_world_sharp">
+
+    <physics name="1ms" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact"/>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+          <material><ambient>0.6 0.6 0.6 1</ambient><diffuse>0.6 0.6 0.6 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= Zone A: flat approach, x 0.0 -> 4.0, z = 0.0 ================= -->
+    <model name="zone_a_approach">
+      <static>true</static>
+      <pose>2.0 0 0.05 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>4.0 3.0 0.1</size></box></geometry>
+          <surface><friction><ode><mu>0.9</mu><mu2>0.9</mu2></ode></friction></surface>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>4.0 3.0 0.1</size></box></geometry>
+          <material><ambient>0.55 0.55 0.55 1</ambient><diffuse>0.55 0.55 0.55 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ============ Zone B: ramp, x 4.0 -> 7.5, rises z 0.0 -> 1.0, angle ~16 deg ============
+         RAMP_LENGTH (slope surface length) = rise / sin(angle) = 1.0 / sin(16deg) ~= 3.64 m
+         RAMP_HORIZ  (horizontal run)       = rise / tan(angle) = 1.0 / tan(16deg) ~= 3.49 m
+         Centered at x = 4.0 + RAMP_HORIZ/2 ~= 5.75, z = 0.5, pitched -16 deg about Y
+         (negative pitch so the surface faces up-and-forward along +X) -->
+    <model name="zone_b_ramp">
+      <static>true</static>
+      <pose>5.75 0 0.5 0 -0.2793 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>3.64 3.0 0.1</size></box></geometry>
+          <!-- lower + dusty friction: this is the zone slip-detection should react to -->
+          <surface><friction><ode><mu>0.55</mu><mu2>0.55</mu2></ode></friction></surface>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>3.64 3.0 0.1</size></box></geometry>
+          <material><ambient>0.45 0.4 0.35 1</ambient><diffuse>0.45 0.4 0.35 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Guard rails along the ramp so the robot has a visual/LiDAR reference edge -->
+    <model name="ramp_rail_left">
+      <static>true</static>
+      <pose>5.75 1.55 1.05 0 -0.2793 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>3.64 0.1 0.4</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>3.64 0.1 0.4</size></box></geometry>
+          <material><ambient>0.9 0.6 0.1 1</ambient><diffuse>0.9 0.6 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="ramp_rail_right">
+      <static>true</static>
+      <pose>5.75 -1.55 1.05 0 -0.2793 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>3.64 0.1 0.4</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>3.64 0.1 0.4</size></box></geometry>
+          <material><ambient>0.9 0.6 0.1 1</ambient><diffuse>0.9 0.6 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= Zone C: flat exit, x 7.5 -> 11.5, z = 1.0 ================= -->
+    <model name="zone_c_exit">
+      <static>true</static>
+      <pose>9.5 0 1.05 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>4.0 3.0 0.1</size></box></geometry>
+          <surface><friction><ode><mu>0.9</mu><mu2>0.9</mu2></ode></friction></surface>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>4.0 3.0 0.1</size></box></geometry>
+          <material><ambient>0.55 0.55 0.55 1</ambient><diffuse>0.55 0.55 0.55 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!--
+      Break-point marker frames (visual only, non-colliding) at the two
+      sharp transitions. Their world-frame poses are what your ramp
+      perception node (phase 4) should eventually estimate from
+      LiDAR/camera rather than reading from this file - they're placed
+      here as ground truth for validation, e.g. comparing your
+      estimated break-point location against x=4.0 and x=7.5 to score
+      detection accuracy in the phase 8 test matrix.
+    -->
+    <model name="breakpoint_bottom_marker">
+      <static>true</static>
+      <pose>4.0 0 0.15 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.05</radius><length>0.3</length></cylinder></geometry>
+          <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="breakpoint_top_marker">
+      <static>true</static>
+      <pose>7.5 0 1.15 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.05</radius><length>0.3</length></cylinder></geometry>
+          <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== TEST-ONLY: obstacles for the phase 8 360 deg LiDAR check =====
+         Robot spawns at x=1.0 y=0.0 facing +X (see ramp_world.launch.py).
+         Both boxes are well within obstacle_lidar_link's 12 m range and
+         outside lidar_link's forward-only ramp-detection cone.
+         Height 1.2 m (pose z=0.6, so spanning ground z=0.0-1.2): tall
+         enough to actually cross obstacle_lidar_link's own mount height
+         (~0.85 m absolute - 0.5 m above base_link, deliberately high to
+         clear the payload box, see robot.urdf.xacro) - a shorter box
+         here would sit entirely below that sensor's horizontal scan
+         plane and (correctly) never be seen, same as a real 2D LiDAR
+         missing a short obstacle below its mount height. -->
+    <model name="test_obstacle_side">
+      <static>true</static>
+      <pose>1.0 -1.0 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.3 0.3 1.2</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>0.3 0.3 1.2</size></box></geometry>
+          <material><ambient>0.9 0.1 0.1 1</ambient><diffuse>0.9 0.1 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="test_obstacle_behind">
+      <static>true</static>
+      <pose>0.2 0 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>0.3 0.3 1.2</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>0.3 0.3 1.2</size></box></geometry>
+          <material><ambient>0.1 0.1 0.9 1</ambient><diffuse>0.1 0.1 0.9 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>

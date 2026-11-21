@@ -1,0 +1,211 @@
+<?xml version="1.0" ?>
+<!--
+  ramp_world_sharp_lowfriction_TESTONLY.sdf
+
+  TEST-ONLY COPY of ramp_world_sharp.sdf, used to deliberately induce
+  real wheel slip by dropping Zone B's ramp-surface friction below its
+  normal "dusty" 0.55 - see the single <mu> change below. Not
+  referenced by any launch file default and not meant to be maintained
+  in lockstep with ramp_world_sharp.sdf; delete if it's no longer
+  useful for re-running these tests.
+
+  PHYSICS CONSTRAINT, found live during phase 7 (not obvious up front):
+  a rigid body on an incline needs mu >= tan(incline angle) to climb at
+  all - below that, no amount of wheel torque produces net forward
+  motion, only slip in place, the same reason a car can't climb an icy
+  hill. tan(16 deg) = 0.287. The original test value here, 0.12, is
+  BELOW that threshold - phase 6/7's live tests never actually climbed
+  this ramp under their own power; whatever position they reported
+  reaching zone C from was very likely odometry drift (already a known,
+  documented gap - wheel-rotation dead reckoning with no contact
+  feedback) rather than genuine progress, not just the separately-found
+  FSM stuck-state bug. Raised to 0.35 (still well below the normal 0.55,
+  still low enough to produce real, measurable slip - confirmed live,
+  see README) but now above the 0.287 climbing floor, so an ascent-then-
+  -descend test can actually complete honestly under its own power.
+
+  Flat -> ramp -> flat world with a SHARP break-point transition (no
+  fillet at the slope changes). Used to stress-test break-point
+  detection and speed reduction at the transition, and as the
+  "hard mode" counterpart to ramp_world_curved.sdf.
+
+  Layout (looking along +X, robot starts at the origin facing +X):
+
+      Zone A            Zone B (ramp)         Zone C
+   flat approach      inclined section      flat exit
+  [===== 4.0 m =====][====== 3.5 m ======][===== 4.0 m =====]
+  x: 0.0 .. 4.0        x: 4.0 .. 7.5        x: 7.5 .. 11.5
+  z: 0.0                z: 0.0 up to 1.0      z: 1.0
+
+  RAMP_ANGLE_DEG is the single source of truth for slope angle -
+  change it here and the derived length/height below stay consistent
+  as long as you recompute RAMP_LENGTH = RAMP_RISE / sin(angle) and
+  RAMP_HORIZ = RAMP_RISE / tan(angle). Defaults: 16 deg, 1.0 m rise.
+
+  Friction is deliberately different per zone (see <surface> blocks)
+  so slip-detection logic has something real to react to:
+    - Zone A / C: dry concrete-like friction (mu ~ 0.9)
+    - Zone B ramp surface: slightly lower, "dusty" friction (mu ~ 0.55)
+      to make ascent/descent slip a realistic risk, not a formality.
+-->
+<sdf version="1.9">
+  <world name="ramp_world_sharp">
+
+    <physics name="1ms" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+    <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact"/>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>100 100</size></plane></geometry>
+          <material><ambient>0.6 0.6 0.6 1</ambient><diffuse>0.6 0.6 0.6 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= Zone A: flat approach, x 0.0 -> 4.0, z = 0.0 ================= -->
+    <model name="zone_a_approach">
+      <static>true</static>
+      <pose>2.0 0 0.05 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>4.0 3.0 0.1</size></box></geometry>
+          <surface><friction><ode><mu>0.9</mu><mu2>0.9</mu2></ode></friction></surface>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>4.0 3.0 0.1</size></box></geometry>
+          <material><ambient>0.55 0.55 0.55 1</ambient><diffuse>0.55 0.55 0.55 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ============ Zone B: ramp, x 4.0 -> 7.5, rises z 0.0 -> 1.0, angle ~16 deg ============
+         RAMP_LENGTH (slope surface length) = rise / sin(angle) = 1.0 / sin(16deg) ~= 3.64 m
+         RAMP_HORIZ  (horizontal run)       = rise / tan(angle) = 1.0 / tan(16deg) ~= 3.49 m
+         Centered at x = 4.0 + RAMP_HORIZ/2 ~= 5.75, z = 0.5, pitched -16 deg about Y
+         (negative pitch so the surface faces up-and-forward along +X) -->
+    <!-- GEOMETRY FIX (crest freeze diagnosis, validation/phase8/crest_freeze/README.md): the ramp slabs were authored 0.052 m too low relative to zone_a_approach (top 0.10) and zone_c_exit (top 1.10) - box-center-vs-top-surface mistake, leaving a +0.050 m step at the crest and a -0.05 m step at the ramp foot. Ramp poses raised by 0.052 m; originals in validation/phase8/crest_freeze/data/ramp_world_sharp_mu030_TESTONLY.sdf.ORIGINAL -->
+  <model name="zone_b_ramp">
+      <static>true</static>
+      <pose>5.75 0 0.552 0 -0.2793 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>3.64 3.0 0.1</size></box></geometry>
+          <!-- lower + dusty friction: this is the zone slip-detection should react to -->
+          <!-- TEST-ONLY, dropped from the normal 0.55: 0.02 (phase 6, first try)
+               was too extreme - near-frictionless combined with the incline made
+               the physics unstable. 0.12 (phase 6/7) produced real, controllable
+               slip but is below tan(16deg)=0.287, the minimum needed to climb this
+               grade at all - see the file header. 0.35 (first phase-7-continuation try) is
+               technically above that floor but too close to it for reliable
+               dynamic climbing - live-tested, the robot got genuinely stuck
+               mid-ramp for 70+ seconds of real time with zero progress (pure
+               static-friction math ignores acceleration, weight transfer, and
+               real dynamic effects, which all eat into the thin margin above
+               0.287). Raised to 0.45: comfortable margin above the theoretical
+               floor for actual reliable climbing, still well below the normal
+               0.55, still low enough to produce real measurable slip. -->
+          <surface><friction><ode><mu>0.30</mu><mu2>0.30</mu2></ode></friction></surface>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>3.64 3.0 0.1</size></box></geometry>
+          <material><ambient>0.45 0.4 0.35 1</ambient><diffuse>0.45 0.4 0.35 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Guard rails along the ramp so the robot has a visual/LiDAR reference edge -->
+    <model name="ramp_rail_left">
+      <static>true</static>
+      <pose>5.75 1.55 1.102 0 -0.2793 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>3.64 0.1 0.4</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>3.64 0.1 0.4</size></box></geometry>
+          <material><ambient>0.9 0.6 0.1 1</ambient><diffuse>0.9 0.6 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="ramp_rail_right">
+      <static>true</static>
+      <pose>5.75 -1.55 1.102 0 -0.2793 0</pose>
+      <link name="link">
+        <collision name="collision"><geometry><box><size>3.64 0.1 0.4</size></box></geometry></collision>
+        <visual name="visual">
+          <geometry><box><size>3.64 0.1 0.4</size></box></geometry>
+          <material><ambient>0.9 0.6 0.1 1</ambient><diffuse>0.9 0.6 0.1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= Zone C: flat exit, x 7.5 -> 11.5, z = 1.0 ================= -->
+    <model name="zone_c_exit">
+      <static>true</static>
+      <pose>9.5 0 1.05 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>4.0 3.0 0.1</size></box></geometry>
+          <surface><friction><ode><mu>0.9</mu><mu2>0.9</mu2></ode></friction></surface>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>4.0 3.0 0.1</size></box></geometry>
+          <material><ambient>0.55 0.55 0.55 1</ambient><diffuse>0.55 0.55 0.55 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!--
+      Break-point marker frames (visual only, non-colliding) at the two
+      sharp transitions. Their world-frame poses are what your ramp
+      perception node (phase 4) should eventually estimate from
+      LiDAR/camera rather than reading from this file - they're placed
+      here as ground truth for validation, e.g. comparing your
+      estimated break-point location against x=4.0 and x=7.5 to score
+      detection accuracy in the phase 8 test matrix.
+    -->
+    <model name="breakpoint_bottom_marker">
+      <static>true</static>
+      <pose>4.0 0 0.15 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.05</radius><length>0.3</length></cylinder></geometry>
+          <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="breakpoint_top_marker">
+      <static>true</static>
+      <pose>7.5 0 1.15 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.05</radius><length>0.3</length></cylinder></geometry>
+          <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>

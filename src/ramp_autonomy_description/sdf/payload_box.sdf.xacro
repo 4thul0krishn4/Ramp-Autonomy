@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!-- Separate payload model for the delivery session (spawned by ramp_world.launch.py when detachable_payload:=true and payload_mass > 0). Same body as the URDF payload_link it
+     replaces: 0.5 x 0.4 x 0.3 m box, mass = payload_mass, inertia 0.05 on the diagonal (the value the URDF payload_link always used), orange visual. Pose at spawn (phase 8, side
+     chute) is the payload_chute_joint's resting place on the robot (robot.urdf.xacro's own chute comment has the full derivation): robot spawn (x 1.0, z 0.23) -> base_link
+     z 0.35 -> payload at (1.0 - 0.15 + cg_offset, 0.28, 0.35 + 0.24), tilted -20 deg (roll) to sit flush on the chute's own incline, secured close to centreline for
+     chassis stability with a gentler tilt for obstacle-LiDAR clearance (robot.urdf.xacro's chute comment has the full derivation). This fallback pose is only used if
+     this file is ever spawned WITHOUT going through ramp_world.launch.py's own -x/-y/-z/-R (which override it) - kept in sync for that case. -->
+<sdf version="1.9" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:arg name="payload_mass" default="100.0"/>
+  <xacro:arg name="payload_cg_offset" default="0.0"/>
+  <!-- contact_diag (default false): adds a <sensor type="contact"> on the SAME collision geometry, for a one-off post-hoc verification of the cargo_mode:=loose
+       demo's physical plausibility (docs/construction_site_design.md "Unsecured cargo demo mode" -> verification). Pure telemetry - no collision/inertial/friction
+       change - so it cannot alter dynamics; omitted everywhere except that one-off diagnostic run, so every validated/default call site (including the delivery
+       session's detachable_payload:=true, which also spawns this file) is untouched. -->
+  <xacro:arg name="contact_diag" default="false"/>
+  <xacro:property name="px" value="${1.0 - 0.15 + float('$(arg payload_cg_offset)')}"/>
+  <!-- rpy left at 0 0 0 here deliberately: an EARLIER guess (a non-zero rpy here, spawned alongside ramp_world.launch.py's own -R) produced a roll roughly
+       double what either alone specified. Root cause turned out not to be this file at all (an isolated test confirmed create's -R overrides cleanly, no
+       compounding) - it was the payload's own rest position overhanging the chute plate's support (see robot.urdf.xacro's chute comment), which let it tip
+       further under gravity after spawning correctly at -25 deg. Left at 0 0 0 anyway since only ramp_world.launch.py's -x/-y/-z/-R are ever actually used. -->
+  <model name="payload_box">
+    <static>false</static>
+    <pose>${px} 0.28 0.59 0 0 0</pose>
+    <link name="payload_link">
+      <inertial>
+        <mass>$(arg payload_mass)</mass>
+        <inertia><ixx>0.05</ixx><iyy>0.05</iyy><izz>0.05</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia>
+      </inertial>
+      <visual name="visual">
+        <geometry><box><size>0.5 0.4 0.3</size></box></geometry>
+        <material><ambient>0.9 0.55 0.1 1</ambient><diffuse>0.9 0.55 0.1 1</diffuse></material>
+      </visual>
+      <collision name="collision">
+        <geometry><box><size>0.5 0.4 0.3</size></box></geometry>
+        <!-- mu 0.3 (not the default 1.0): after release the payload is pushed sideways off the deck onto the dock; the dock face is the only thing that has to stop it (see payload_unloader.py). -->
+        <surface><friction><ode><mu>0.3</mu><mu2>0.3</mu2></ode></friction></surface>
+      </collision>
+      <xacro:if value="${'$(arg contact_diag)' == 'true'}">
+        <sensor name="payload_contact" type="contact">
+          <contact><collision>collision</collision><topic>/payload/contact</topic></contact>
+          <update_rate>1000</update_rate>
+        </sensor>
+      </xacro:if>
+    </link>
+  </model>
+</sdf>

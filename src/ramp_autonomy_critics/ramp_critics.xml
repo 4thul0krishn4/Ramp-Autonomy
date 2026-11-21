@@ -1,0 +1,10 @@
+<class_libraries>
+  <library path="ramp_mppi_critics">
+    <class type="mppi::critics::RampCrossTrackCritic" base_class_type="mppi::critics::CriticFunction">
+      <description>explicit lateral (cross-track) cost: distance of every sampled trajectory point to the nearest path segment, plus a corridor hinge; no arc-length matching, no furthest-point gating</description>
+    </class>
+    <class type="mppi::critics::PathProbeCritic" base_class_type="mppi::critics::CriticFunction">
+      <description>observer only (adds zero cost): logs what the path critics see - pruned path size, furthest reached index, trajectory reach</description>
+    </class>
+  </library>
+</class_libraries>

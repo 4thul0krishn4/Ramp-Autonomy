@@ -1,0 +1,241 @@
+# nav2_params.yaml
+#
+# Phase 3: minimal Nav2 slice needed to have a *real* MPPI local planner
+# in the loop, so nav2_param_switcher_node.py has something live to
+# reconfigure as /ramp_state changes.
+#
+# Deliberately scoped to controller_server + its local_costmap only -
+# no planner_server/bt_navigator/amcl/global_costmap. There's no map and
+# no waypoint-following goal source yet (that's phase 5, "slope-aware
+# planning & control", not started per the README status table); this
+# phase is about proving the MPPI controller is live and its velocity/
+# heading-tolerance bounds respond to ramp state, which only needs the
+# controller layer active. FollowPath's action server can still be sent
+# a manual test path for verification without the rest of the stack.
+#
+# FollowPath starts configured with flat_mode's values (see
+# ramp_mppi_params.yaml) since the robot always starts in APPROACH.
+# controller_server owns its own internal local_costmap lifecycle node
+# (nav2_bringup's navigation_launch.py doesn't list it separately in
+# lifecycle_manager node_names either, for the same reason) - both
+# sections below are read from the same params file at process start.
+
+controller_server:
+  ros__parameters:
+    use_sim_time: true
+    controller_frequency: 20.0
+    costmap_update_timeout: 0.30
+    # EKF fusion (phase 8 session A/B follow-up - see ekf.yaml and the
+    # README's "Known gaps" entry): controller_server's own velocity
+    # feedback (nav_2d_utils::OdomSubscriber, param "odom_topic") now
+    # reads the fused estimate instead of gz-sim's raw wheel odometry.
+    # The robot's CURRENT POSE (used via TF, global_frame=odom /
+    # robot_base_frame=base_footprint below and in local_costmap) is
+    # fixed by ekf_node now being the sole publisher of the
+    # odom->base_footprint transform - see ramp_world.launch.py, which no
+    # longer bridges gz-sim's own raw odom TF for exactly this reason.
+    odom_topic: "/odometry/filtered"
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+    failure_tolerance: 0.3
+    progress_checker_plugins: ["progress_checker"]
+    goal_checker_plugins: ["general_goal_checker"]
+    controller_plugins: ["FollowPath"]
+
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.3
+      movement_time_allowance: 15.0
+    general_goal_checker:
+      stateful: True
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.25
+
+    FollowPath:
+      plugin: "nav2_mppi_controller::MPPIController"
+      time_steps: 56
+      model_dt: 0.05
+      batch_size: 2000
+      ax_max: 2.0
+      ax_min: -2.0
+      ay_max: 2.0
+      ay_min: -2.0
+      az_max: 3.0
+      vx_std: 0.2
+      vy_std: 0.2
+      wz_std: 0.4
+      # vx_max / vx_min / wz_max below are flat_mode's starting values
+      # (APPROACH state) - nav2_param_switcher_node.py overwrites all
+      # three at runtime via /controller_server/set_parameters as
+      # /ramp_state changes. vx_min is not itself a ramp_mppi_params.yaml
+      # field; the switcher derives it as -max_vel_x (symmetric reverse
+      # cap) so HALT's max_vel_x=0.0 actually zeroes reverse creep too,
+      # not just forward speed.
+      vx_max: 0.8
+      vx_min: -0.8
+      vy_max: 0.5
+      wz_max: 1.2
+      iteration_count: 1
+      prune_distance: 1.7
+      transform_tolerance: 0.2
+      temperature: 0.3
+      gamma: 0.015
+      motion_model: "DiffDrive"
+      visualize: false
+      regenerate_noises: true
+      TrajectoryVisualizer:
+        trajectory_step: 5
+        time_step: 3
+      critics: [
+        "ConstraintCritic", "CostCritic", "GoalCritic",
+        "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
+        "PathAngleCritic", "PreferForwardCritic"]
+      ConstraintCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 4.0
+      GoalCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        threshold_to_consider: 1.4
+      GoalAngleCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 3.0
+        threshold_to_consider: 0.5
+      PreferForwardCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        threshold_to_consider: 0.5
+      CostCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 3.81
+        near_collision_cost: 253
+        critical_cost: 300.0
+        consider_footprint: false
+        collision_cost: 1000000.0
+        near_goal_distance: 1.0
+        trajectory_point_step: 2
+      PathAlignCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 14.0
+        max_path_occupancy_ratio: 0.05
+        trajectory_point_step: 4
+        threshold_to_consider: 0.5
+        offset_from_furthest: 20
+        use_path_orientations: false
+      PathFollowCritic:
+        enabled: true
+        cost_power: 1
+        cost_weight: 5.0
+        offset_from_furthest: 5
+        threshold_to_consider: 1.4
+      PathAngleCritic:
+        # max_angle_to_furthest is the field nav2_param_switcher_node.py
+        # rewrites from heading_tolerance_deg on every /ramp_state change.
+        enabled: true
+        cost_power: 1
+        cost_weight: 2.0
+        offset_from_furthest: 4
+        threshold_to_consider: 0.5
+        max_angle_to_furthest: 0.2618  # 15 deg (flat_mode default), in radians
+        mode: 0
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      use_sim_time: true
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_footprint
+      rolling_window: true
+      width: 6
+      height: 6
+      resolution: 0.05
+      robot_radius: 0.45
+      plugins: ["obstacle_layer", "inflation_layer"]
+      # Phase 8: obstacle_layer now reads /scan_360 (robot.urdf.xacro's
+      # second, level-mounted LiDAR - see its own comment for why) instead
+      # of /scan. /scan is the rolled ramp-profiling sensor
+      # ramp_classifier_node.py depends on - feeding it here too was the
+      # original phase-4 workaround that cost the robot its side/rear
+      # obstacle coverage (a rolled scan's returns are ground-profile
+      # points at arbitrary heights, not a normal horizontal obstacle
+      # ring, and ObstacleLayer has no way to tell the difference), now
+      # fixed with a real second sensor instead of a shared one.
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: true
+        observation_sources: scan_360
+        scan_360:
+          topic: /scan_360
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 6.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 5.0
+          obstacle_min_range: 0.0
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.4
+      always_send_full_costmap: True
+
+# Phase 6: cmd_vel watchdog (timeout layer). controller_server's raw
+# output is remapped to cmd_vel_nav (see ramp_autonomy_bringup.launch.py)
+# and fed through here rather than straight to the robot -
+# nav2_velocity_smoother is the standard Nav2 component for exactly
+# this, and it already has a documented velocity_timeout behavior
+# (publish zero once no new command has arrived for that long), so this
+# is the "use what the stack already provides" choice over hand-rolling
+# a custom timeout node. max_velocity/max_accel etc. mirror
+# robot.urdf.xacro's DiffDrive plugin's own hard caps exactly (1.2 /
+# -0.6 m/s, 1.8 rad/s, 2.0 m/s^2, 3.0 rad/s^2) rather than inventing a
+# third tier of limits - this stage is a pass-through/safety-net, not
+# another behavior-mode limiter (that job belongs to the MPPI profiles
+# nav2_param_switcher_node.py pushes).
+#
+# Phase 8: this is NOT the last stage anymore. Its own output (fixed
+# name cmd_vel_smoothed) is remapped to cmd_vel_gated_in, consumed by
+# cmd_vel_watchdog_node.py - a second, independent gate that forces
+# zero on /ramp_state == HALT regardless of what MPPI profile is
+# actually active, closing the gap nav2_param_switcher_node.py's own
+# docstring flags (retry + logging is not an independent enforcement
+# path against set_parameters failing/lagging). See that node's own
+# docstring for the full design, including why inserting it as a single
+# mandatory gate (not a second parallel publisher) is what avoids
+# racing anything for the real actuation topic.
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: true
+    smoothing_frequency: 20.0
+    scale_velocities: false
+    feedback: "OPEN_LOOP"
+    max_velocity: [1.2, 0.0, 1.8]
+    min_velocity: [-0.6, 0.0, -1.8]
+    max_accel: [2.0, 0.0, 3.0]
+    max_decel: [-2.0, 0.0, -3.0]
+    odom_topic: "odom"
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    # Tuned live (see README): with the FSM publishing /ramp_state at
+    # 10 Hz and controller_frequency 20 Hz, 0.5 s is ~10x the nominal
+    # command period - generous enough that normal jitter never trips
+    # it, but bounds worst-case coast-on-last-command to well under a
+    # robot-length of travel even at flat_mode's 0.8 m/s ceiling.
+    velocity_timeout: 0.5
+
+lifecycle_manager:
+  ros__parameters:
+    use_sim_time: true
+    autostart: true
+    node_names: ["controller_server", "velocity_smoother"]

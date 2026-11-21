@@ -1,0 +1,33 @@
+== run2_new_fsm/new_loaded.json: ok=True  legs:
+   L1: action result status 4; odom_disp 26.478 GT 26.478 (GT-odom -0.0) final gz [27.478, -0.001, 0.275] ok=True
+   L2: reached target; odom_disp 27.092 GT 26.983 (GT-odom -0.108) final gz [54.462, -0.001, 3.475] ok=True
+   L3: reached target; odom_disp 21.484 GT 21.373 (GT-odom -0.111) final gz [75.835, 0.006, 6.675] ok=True
+   L4: reached target; odom_disp -27.597 GT -27.688 (GT-odom -0.091) final gz [48.438, 0.006, 3.475] ok=True
+   L5: reached target; odom_disp -26.004 GT -26.071 (GT-odom -0.067) final gz [22.368, -0.007, 0.275] ok=True
+== /ramp_state transitions (pitch: negative = nose up):
+   t=   67.6   APPROACH -> ASCENT     pitch=  -5.07 vx= 0.467 odom_x= 27.25 gz=(28.1, z=0.293) bp_dist=-1.0 conf=0.89
+   t=   67.7     ASCENT -> TRANSITION pitch=  -5.34 vx= 0.348 odom_x= 27.28 gz=(28.1, z=0.293) bp_dist=0.6 conf=0.96
+   t=  141.9 TRANSITION -> EXIT       pitch=  -4.90 vx= 0.200 odom_x= 39.24 gz=(39.99, z=3.439) bp_dist=-1.0 conf=0.9
+   t=  204.3       EXIT -> ASCENT     pitch=  -5.08 vx= 0.548 odom_x= 55.32 gz=(56.12, z=3.495) bp_dist=-1.0 conf=0.89
+   t=  204.6     ASCENT -> TRANSITION pitch=  -5.89 vx= 0.349 odom_x= 55.44 gz=(56.12, z=3.495) bp_dist=0.52 conf=0.96
+   t=  278.9 TRANSITION -> EXIT       pitch=  -4.83 vx= 0.200 odom_x= 67.33 gz=(68.03, z=6.647) bp_dist=0.55 conf=0.93
+   t=  332.4       EXIT -> DESCENT    pitch=   5.32 vx= 0.522 odom_x= 67.01 gz=(68.19, z=6.655) bp_dist=-1.0 conf=0.76
+   t=  375.8    DESCENT -> EXIT       pitch=   4.86 vx= 0.324 odom_x= 55.22 gz=(56.4, z=3.523) bp_dist=0.53 conf=0.96
+   t=  478.1       EXIT -> DESCENT    pitch=   5.22 vx= 0.364 odom_x= 39.14 gz=(40.22, z=3.455) bp_dist=0.56 conf=0.96
+   t=  520.9    DESCENT -> EXIT       pitch=   4.81 vx= 0.349 odom_x= 27.32 gz=(28.3, z=0.304) bp_dist=-1.0 conf=0.91
+== labels vs physical motion (ground-truth dz/dt, +-1.6 s window):
+     APPROACH: level 129   (samples at 2 Hz)
+       ASCENT: level 1   (samples at 2 Hz)
+   TRANSITION: climbing 266, level 26   (samples at 2 Hz)
+         EXIT: level 348   (samples at 2 Hz)
+      DESCENT: descending 170, level 2   (samples at 2 Hz)
+         HALT: climbing 4, level 131   (samples at 2 Hz)
+   no mislabelled samples
+== live controller parameters vs the profile of the current state (samples where the state has been unchanged >= 2.0 s):
+     APPROACH -> flat_mode        117/117 samples carry the expected profile; ax_max 2.00..2.00
+   TRANSITION -> transition_mode  93/93 samples carry the expected profile; ax_max 2.00..2.00
+         EXIT -> flat_mode        289/289 samples carry the expected profile; ax_max 0.40..2.00
+      DESCENT -> descent_mode     164/164 samples carry the expected profile; ax_max 0.40..1.16
+== sim RTF from /clock (5 s windows, n=107): mean 0.915 median 0.912 min 0.889 max 0.950
+   by state at window end: APPROACH 0.937 (n=13), TRANSITION 0.913 (n=30), EXIT 0.912 (n=33), HALT 0.915 (n=13), DESCENT 0.906 (n=18)
+== HALT events: 65   health: {'n': 23, 'min_rtf': 0.886, 'mean_rtf': 0.913, 'max_load1': 6.82, 'n_low_rtf': 0, 'starved': False}

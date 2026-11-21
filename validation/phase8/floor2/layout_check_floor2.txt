@@ -1,0 +1,15 @@
+ok   new geometry starts at x = 55.97 m (Floor-1 route region is x <= ~50.5; nothing new west of 55.9)
+ok   every Floor-2-level object is inside the Floor-2 slab (x 68.94-86.94, y +-8)
+ok   no interpenetration between different new objects (61 touching/overlapping pairs total, 0 unexpected)
+   lane clearance (min |y| of physical objects standing on Floor 2, x in the slab; centreline y = 0):
+        barrier    min  2.87 m  (floor2_jersey_barrier_south)
+        delivery   min  1.66 m  (floor2_delivery_marker)
+        masonry    min  7.30 m  (cmu_infill_wall)
+        scaffold   min  5.72 m  (mason_tower_scaffold)
+        staging    min  3.00 m  (floor2_pallet_b)
+        stair      min  3.40 m  (stair_core_walls)
+ok   closest physical object to the lane centreline: floor2_delivery_marker at 1.66 m (>= 1.5 m buffer; staging/stair/wall/scaffold all >= 2.0 m except the delivery marker post)
+ok   all non-delivery objects >= 2.0 m from the centreline
+ok   no new object comes within 0.3 m of any pre-existing model
+
+RESULT: LAYOUT CHECK PASS

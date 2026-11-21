@@ -1,0 +1,18 @@
+
+=== curved / 0.45 / loaded: COMPLETED 12/12 = 100% (Wilson 95% 76-100%) [pre-registered foot criterion x<=5.0 & z<=0.5: 4/12];  strict RTF>=0.995: 8/8;  ascent verdicts {'PASS': 12}
+    HALTs median 2 range 0-9, thrash(>=8) 2/12;  max|y| over completed-ascent runs 0.030;  min RTF 0.990; starved 0;  ascent GT-vs-odom disagreement -0.14..-0.14 m
+
+=== curved / normal / loaded: COMPLETED 12/12 = 100% (Wilson 95% 76-100%) [pre-registered foot criterion x<=5.0 & z<=0.5: 3/12];  strict RTF>=0.995: 12/12;  ascent verdicts {'PASS': 12}
+    HALTs median 4 range 0-7, thrash(>=8) 0/12;  max|y| over completed-ascent runs 0.020;  min RTF 0.997; starved 0;  ascent GT-vs-odom disagreement -0.14..-0.14 m
+
+=== sharp / normal / loaded: COMPLETED 12/12 = 100% (Wilson 95% 76-100%) [pre-registered foot criterion x<=5.0 & z<=0.5: 12/12];  strict RTF>=0.995: 12/12;  ascent verdicts {'PASS': 12}
+    HALTs median 2 range 1-6, thrash(>=8) 0/12;  max|y| over completed-ascent runs 0.030;  min RTF 0.996; starved 0;  ascent GT-vs-odom disagreement -0.16..-0.15 m
+
+=== sharp / 0.45 / loaded: COMPLETED 12/12 = 100% (Wilson 95% 76-100%) [pre-registered foot criterion x<=5.0 & z<=0.5: 11/12];  strict RTF>=0.995: 12/12;  ascent verdicts {'PASS': 12}
+    HALTs median 5 range 1-10, thrash(>=8) 1/12;  max|y| over completed-ascent runs 0.020;  min RTF 0.995; starved 0;  ascent GT-vs-odom disagreement -0.16..-0.15 m
+
+=== curved / normal / unloaded (regression): COMPLETED 6/6 = 100% (Wilson 95% 61-100%) [pre-registered foot criterion x<=5.0 & z<=0.5: 6/6];  strict RTF>=0.995: 6/6;  ascent verdicts {'PASS': 6}
+    HALTs median 2 range 2-8, thrash(>=8) 1/6;  max|y| over completed-ascent runs 0.020;  min RTF 0.998; starved 0;  ascent GT-vs-odom disagreement -0.14..-0.14 m
+
+=== sharp / normal / unloaded (regression): COMPLETED 6/6 = 100% (Wilson 95% 61-100%) [pre-registered foot criterion x<=5.0 & z<=0.5: 5/6];  strict RTF>=0.995: 6/6;  ascent verdicts {'PASS': 6}
+    HALTs median 3 range 1-6, thrash(>=8) 0/6;  max|y| over completed-ascent runs 0.030;  min RTF 0.997; starved 0;  ascent GT-vs-odom disagreement -0.15..-0.15 m

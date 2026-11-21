@@ -1,0 +1,50 @@
+
+=== SCOPED detector ===
+  Arm P (scoped), earlier 6          n= 6  FAIL 0/6 (Wilson 95% 0-39%)  [E1 fails 0, E2' fails 0]  max|y| mean 0.029 max 0.045 | HALTs median 6 range 4-9, thrash(>=8) 1/6 | min RTF 0.990, strict RTF>=0.995: 0/3 fail
+      curved_unloaded_normal_armP_r1             max|y| 0.016 final gz (4.20,-0.01,0.23) HALTs  4 RTF 0.995 
+      curved_unloaded_normal_armP_r2             max|y| 0.021 final gz (4.19,+0.02,0.23) HALTs  5 RTF 0.994 
+      curved_unloaded_normal_armP_r3             max|y| 0.018 final gz (4.25,+0.02,0.24) HALTs  6 RTF 0.996 
+      curved_unloaded_normal_armP_r4             max|y| 0.034 final gz (4.36,-0.03,0.23) HALTs  6 RTF 0.995 
+      curved_unloaded_normal_armP_r5             max|y| 0.038 final gz (4.37,+0.02,0.23) HALTs  5 RTF 0.994 
+      curved_unloaded_normal_armP_r6             max|y| 0.045 final gz (4.15,+0.05,0.23) HALTs  9 RTF 0.990 
+  Arm P (scoped), new 12             n=12  FAIL 0/12 (Wilson 95% 0-24%)  [E1 fails 0, E2' fails 0]  max|y| mean 0.039 max 0.056 | HALTs median 8 range 5-14, thrash(>=8) 7/12 | min RTF 0.983, strict RTF>=0.995: 0/7 fail
+      curved_unloaded_normal_armP2_r1            max|y| 0.021 final gz (4.31,+0.02,0.24) HALTs  8 RTF 0.996 
+      curved_unloaded_normal_armP2_r2            max|y| 0.056 final gz (4.18,+0.06,0.23) HALTs  6 RTF 0.999 
+      curved_unloaded_normal_armP2_r3            max|y| 0.039 final gz (4.32,+0.02,0.24) HALTs  9 RTF 0.998 
+      curved_unloaded_normal_armP2_r4            max|y| 0.041 final gz (4.25,+0.02,0.24) HALTs 14 RTF 0.994 
+      curved_unloaded_normal_armP2_r5            max|y| 0.036 final gz (4.26,+0.01,0.24) HALTs  9 RTF 0.999 
+      curved_unloaded_normal_armP2_r6            max|y| 0.052 final gz (4.35,+0.05,0.24) HALTs  8 RTF 0.999 
+      curved_unloaded_normal_armP2_r7            max|y| 0.043 final gz (4.33,+0.00,0.24) HALTs  6 RTF 0.994 
+      curved_unloaded_normal_armP2_r8            max|y| 0.040 final gz (4.24,-0.01,0.24) HALTs  5 RTF 0.999 
+      curved_unloaded_normal_armP2_r9            max|y| 0.049 final gz (4.51,-0.00,0.26) HALTs  5 RTF 0.996 
+      curved_unloaded_normal_armP2_r10           max|y| 0.043 final gz (4.36,+0.02,0.24) HALTs 14 RTF 0.994 
+      curved_unloaded_normal_armP2_r11           max|y| 0.015 final gz (4.18,-0.00,0.23) HALTs  6 RTF 0.992 
+      curved_unloaded_normal_armP2_r12           max|y| 0.030 final gz (4.17,+0.03,0.23) HALTs  9 RTF 0.983 
+  --- pooled ---
+  SCOPED pooled                      n=18  FAIL 0/18 (Wilson 95% 0-18%)  [E1 fails 0, E2' fails 0]  max|y| mean 0.035 max 0.056 | HALTs median 6 range 4-14, thrash(>=8) 8/18 | min RTF 0.983, strict RTF>=0.995: 0/10 fail
+
+=== UNSCOPED FIXED detector ===
+  Arm P-fixed (unscoped), earlier 6  n= 6  FAIL 0/6 (Wilson 95% 0-39%)  [E1 fails 0, E2' fails 0]  max|y| mean 0.040 max 0.048 | HALTs median 6 range 4-7, thrash(>=8) 0/6 | min RTF 0.985, strict RTF>=0.995: 0/2 fail
+      curved_unloaded_normal_armPfixed_r1        max|y| 0.045 final gz (4.20,+0.02,0.23) HALTs  5 RTF 0.995 
+      curved_unloaded_normal_armPfixed_r2        max|y| 0.039 final gz (4.41,+0.02,0.24) HALTs  6 RTF 0.993 
+      curved_unloaded_normal_armPfixed_r3        max|y| 0.048 final gz (4.36,+0.05,0.24) HALTs  4 RTF 0.995 
+      curved_unloaded_normal_armPfixed_r4        max|y| 0.036 final gz (4.21,+0.01,0.23) HALTs  6 RTF 0.992 
+      curved_unloaded_normal_armPfixed_r5        max|y| 0.030 final gz (4.52,-0.03,0.26) HALTs  7 RTF 0.991 
+      curved_unloaded_normal_armPfixed_r6        max|y| 0.041 final gz (4.33,+0.03,0.24) HALTs  4 RTF 0.985 
+  Arm P-fixed (unscoped), new 12     n=12  FAIL 0/12 (Wilson 95% 0-24%)  [E1 fails 0, E2' fails 0]  max|y| mean 0.035 max 0.046 | HALTs median 6 range 2-13, thrash(>=8) 3/12 | min RTF 0.994, strict RTF>=0.995: 0/11 fail
+      curved_unloaded_normal_armPfixed2_r1       max|y| 0.039 final gz (4.22,+0.03,0.23) HALTs  5 RTF 0.994 
+      curved_unloaded_normal_armPfixed2_r2       max|y| 0.039 final gz (4.24,+0.01,0.24) HALTs  7 RTF 0.998 
+      curved_unloaded_normal_armPfixed2_r3       max|y| 0.037 final gz (4.23,-0.03,0.24) HALTs  5 RTF 0.998 
+      curved_unloaded_normal_armPfixed2_r4       max|y| 0.029 final gz (4.15,+0.03,0.23) HALTs  9 RTF 0.999 
+      curved_unloaded_normal_armPfixed2_r5       max|y| 0.042 final gz (4.24,+0.01,0.24) HALTs  6 RTF 0.995 
+      curved_unloaded_normal_armPfixed2_r6       max|y| 0.016 final gz (4.37,-0.01,0.23) HALTs  6 RTF 0.998 
+      curved_unloaded_normal_armPfixed2_r7       max|y| 0.017 final gz (4.21,+0.02,0.23) HALTs  4 RTF 0.998 
+      curved_unloaded_normal_armPfixed2_r8       max|y| 0.043 final gz (4.23,+0.04,0.24) HALTs  7 RTF 0.998 
+      curved_unloaded_normal_armPfixed2_r9       max|y| 0.034 final gz (4.35,+0.03,0.24) HALTs  5 RTF 0.995 
+      curved_unloaded_normal_armPfixed2_r10      max|y| 0.040 final gz (4.28,+0.00,0.24) HALTs  2 RTF 0.999 
+      curved_unloaded_normal_armPfixed2_r11      max|y| 0.046 final gz (4.39,+0.01,0.24) HALTs 12 RTF 0.997 
+      curved_unloaded_normal_armPfixed2_r12      max|y| 0.041 final gz (4.35,-0.03,0.24) HALTs 13 RTF 0.997 
+  --- pooled ---
+  UNSCOPED FIXED pooled              n=18  FAIL 0/18 (Wilson 95% 0-18%)  [E1 fails 0, E2' fails 0]  max|y| mean 0.037 max 0.048 | HALTs median 6 range 2-13, thrash(>=8) 3/18 | min RTF 0.985, strict RTF>=0.995: 0/13 fail
+
+scoped 0/18 vs unscoped 0/18: exact Fisher p = 1.000

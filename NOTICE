@@ -1,0 +1,24 @@
+Ramp Autonomy
+Copyright 2026 Kunal Yadav
+
+This product includes software developed by Kunal Yadav.
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+----------------------------------------------------------------------
+Third-party assets
+----------------------------------------------------------------------
+
+This repository bundles or references third-party assets that remain
+under their own licenses, and which are NOT covered by the Apache
+License above. See THIRD_PARTY_LICENSES.md for the full list and terms.
+
+Notably:
+
+  - src/ramp_autonomy_description/meshes/mir100/
+    MiR 100 chassis mesh, BSD-3-Clause (DFKI).
+    See meshes/mir100/LICENSE-BSD-3-Clause-DFKI.txt
+
+  - Gazebo Fuel props placed in the construction site world
+    Various licenses, per model. See THIRD_PARTY_LICENSES.md and
+    docs/construction_site_design.md for per-model sourcing.

@@ -1,0 +1,26 @@
+BASELINES
+  original 0/6                       n= 6 GT fail  0/6  =   0% (Wilson 0-39%)  max|y| mean 0.90 sd 0.26 median 0.98 range 0.39-1.11
+  fixed 10/10                        n=10 GT fail 10/10 = 100% (Wilson 72-100%)  max|y| mean 2.49 sd 0.63 median 2.41 range 1.74-3.85
+  scoped 5/14                        n=14 GT fail  5/14 =  36% (Wilson 16-61%)  max|y| mean 1.32 sd 0.72 median 1.03 range 0.38-2.54
+
+=== ARM: densify-only 0.05 m ===
+  run                                      GT max|y|   verdict HALTs stall/slip  leg m   n       final gz (x, y, z) min RTF
+  curved_unloaded_normal_dense005_r1            0.86  MARGINAL     4       3/20   0.05  16 (  7.95,  0.86, 1.15)   0.993  <0.995
+  curved_unloaded_normal_dense005_r2            0.19      FAIL    12       4/24   0.12  16 (  7.98,  0.19, 1.15)   0.996
+  curved_unloaded_normal_dense005_r3            0.18      FAIL    11       3/17   0.12  16 (  7.96,  0.18, 1.15)   0.994  <0.995
+  curved_unloaded_normal_dense005_r4            0.85  MARGINAL     1       1/13   0.07  16 (  7.85,  0.85, 1.15)   0.991  <0.995
+  curved_unloaded_normal_dense005_r5            0.17      FAIL    14       4/23   0.11  16 (  7.99,  0.17, 1.15)   0.993  <0.995
+  curved_unloaded_normal_dense005_r6            0.26      FAIL    13       3/18   0.11  16 (  7.91,  0.26, 1.15)   0.999
+  curved_unloaded_normal_dense005_r7            0.88  MARGINAL     4       1/20   0.05  16 (  7.95,  0.88, 1.15)   0.997
+  curved_unloaded_normal_dense005_r8            0.25  MARGINAL     5       3/13   0.10  16 (  7.99,  0.25, 1.15)   0.992  <0.995
+  curved_unloaded_normal_dense005_r9            0.18  MARGINAL     5       4/15   0.11  16 (  7.98,  0.18, 1.15)   0.999
+  curved_unloaded_normal_dense005_r10           0.84  MARGINAL     5       4/19   0.06  16 (  7.95,  0.85, 1.15)   0.998
+  curved_unloaded_normal_dense005_r11           0.21  MARGINAL     7       5/10   0.09  16 (  7.98,  0.21, 1.15)   0.999
+  curved_unloaded_normal_dense005_r12           0.20      FAIL    10       3/18   0.10  16 (  7.99,  0.20, 1.15)   0.998
+  densify-only 0.05 m (all)          n=12 GT fail  0/12 =   0% (Wilson 0-24%)  max|y| mean 0.42 sd 0.32 median 0.23 range 0.17-0.88
+  densify-only 0.05 m (RTF>=0.995)   n= 7 GT fail  0/7  =   0% (Wilson 0-35%)  max|y| mean 0.39 sd 0.32 median 0.21 range 0.18-0.88
+    vs original 0/6  : failure-rate diff   +0 pts (Newcombe 95% CI -39..+24); Fisher p=1.0000; mean max|y| diff -0.48 m (boot CI -0.71..-0.20); rank p=0.0013
+    vs fixed 10/10   : failure-rate diff -100 pts (Newcombe 95% CI -100..-63); Fisher p=0.0000; mean max|y| diff -2.07 m (boot CI -2.49..-1.68); rank p=0.0001
+    vs scoped 5/14   : failure-rate diff  -36 pts (Newcombe 95% CI -61..-5); Fisher p=0.0425; mean max|y| diff -0.90 m (boot CI -1.31..-0.51); rank p=0.0003
+  HALTs: median 6 mean 7.6 range 1-14; HALT_THRASH(>=8) 5/12
+  descent progress: odom leg distance median 0.10 m (of a 6 m path); runs with leg >= 2.5 m (E2): 0/12

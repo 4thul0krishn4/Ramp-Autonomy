@@ -1,0 +1,200 @@
+# ramp_mppi_params.yaml
+#
+# Phase 3/5: profiles switched live by nav2_param_switcher_node.py as
+# /ramp_state changes, via controller_server's set_parameters service.
+# Each profile's fields map onto real nav2_mppi_controller parameters
+# under the FollowPath plugin namespace (see ramp_autonomy_nav/config/
+# nav2_params.yaml for the base config these values get pushed into):
+#   max_vel_x           -> FollowPath.vx_max              (m/s, unchanged)
+#   max_vel_theta        -> FollowPath.wz_max              (rad/s, unchanged)
+#   heading_tolerance_deg -> FollowPath.PathAngleCritic.max_angle_to_furthest
+#                            (deg -> rad conversion done by the switcher node;
+#                            this is the angular-deviation-from-path tolerance
+#                            critic, the closest MPPI equivalent to a
+#                            per-mode "heading tolerance" knob)
+#   path_align_weight    -> FollowPath.PathAlignCritic.cost_weight
+#                            (unitless MPPI cost weight - see below)
+#   path_align_power     -> FollowPath.PathAlignCritic.cost_power
+#                            (exponent applied to the raw deviation
+#                            metric before weighting - see below)
+#   path_align_offset    -> FollowPath.PathAlignCritic.offset_from_furthest
+#                            (minimum path points reached before the
+#                            critic activates AT ALL - see below, this
+#                            is the one that actually mattered)
+#
+# path_align_weight/path_align_power, added after the EKF-corrected
+# matrix rerun found cross-track error growing UNCHECKED during
+# curved-world descent (instrumented live: 0.44 m -> 2.85 m over ~55 s,
+# smooth and monotonic, zero sign of any restoring force - see
+# validation/phase8/crosstrack_diagnosis/README.md). Root cause:
+# nav2_param_switcher_node.py previously only ever pushed vx_max/
+# vx_min/wz_max/PathAngleCritic - PathAlignCritic (the actual lateral-
+# deviation-from-path critic) stayed at nav2_params.yaml's single
+# static cost_weight (14.0) AND cost_power (1, linear) for every mode.
+#
+# First attempt, weight alone (14.0 -> 60.0, power left at 1): measured
+# live, this roughly halved the early drift RATE but did not fix the
+# failure - a discrete "stumble" at a fillet-panel seam still knocked
+# cross-track error up to ~2.4 m in a couple of seconds, and a purely
+# LINEAR penalty was not steep enough to pull the trajectory back
+# toward center afterward - it just plateaued at the new offset instead
+# of continuing to grow, which is progress but not a fix (still past
+# the 1.5 m panel half-width). Root cause of THAT: cost_power=1 means
+# the critic's cost scales linearly with distance from the path, so a
+# large existing offset isn't punished disproportionately more than a
+# small one - there's no increasing pressure to actively correct back,
+# only to stop drifting further. Fixed by ALSO raising cost_power to 2
+# (quadratic) for ramp_mode/transition_mode: a large deviation is now
+# punished much more steeply than a small one, which should push MPPI
+# to actively trade off some forward progress to correct laterally
+# rather than settling for "stop growing." flat_mode/halt_mode keep the
+# original weight=14.0/power=1 baseline unchanged - flat-ground
+# tracking has already been proven driftless.
+#
+# ramp_mode's max_accel_x / max_accel_theta are NOT pushed by
+# nav2_param_switcher_node.py - they're descent_brake_node.py's own
+# ceiling for FollowPath.ax_max (m/s^2) and FollowPath.az_max (rad/s^2),
+# read once at startup and throttled down live only while /ramp_state ==
+# DESCENT (see that node's docstring for the phase 7 rationale: slip
+# spikes correlate with acceleration transients, not cruising speed).
+#
+# State -> profile mapping (see nav2_param_switcher_node.py RAMP_STATE_PROFILE):
+#   APPROACH, EXIT           -> flat_mode
+#   ASCENT, DESCENT          -> ramp_mode
+#   TRANSITION               -> transition_mode
+#   HALT                     -> halt_mode
+#
+# Fill these in further once you've tuned against ramp_world_sharp / _curved -
+# most values below are still starting-point guesses, not tuned numbers
+# (see README status table for which ones were actually verified against
+# a live run vs. left as placeholders).
+
+flat_mode:
+  max_vel_x: 0.8
+  max_vel_theta: 1.2
+  heading_tolerance_deg: 15.0
+  path_align_weight: 14.0
+  path_align_power: 1
+  # offset_from_furthest corrected 20 -> 3 (crosstrack diagnosis session,
+  # phase 8 construction-site turn-quality follow-up). The "flat-ground
+  # tracking already proven driftless" claim this comment used to make
+  # was never actually a test of THIS setting: legs 1/2/4 (the flat-
+  # ground driving that claim is based on) all use raw /cmd_vel_nav, not
+  # FollowPath - PathAlignCritic isn't in the loop for them at all,
+  # offset_from_furthest or not. The ONE place flat_mode's PathAlignCritic
+  # setting is actually exercised by FollowPath is the construction-site
+  # arc-turn (EXIT state the whole time - it's on a flat elevated
+  # platform, so on_ramp/DESCENT never fires until well after the turn
+  # ends), and that's exactly where a live diagnosis found the same
+  # activation bug the descent leg had before its own fix: the arc phase
+  # of the combined path is only ~16 points (radius 2.0 m, 0.4 m
+  # waypoint spacing), so path_segments_count (data.furthest_reached_
+  # path_point in path_align_critic.cpp) never reaches offset_from_
+  # furthest=20 until several points INTO the taper that follows the
+  # arc - confirmed via an external, code-consistent proxy computed
+  # live against the real Path message and real robot position (see
+  # validation/phase8/construction_site_descent/README.md's "Crosstrack
+  # diagnosis" section for the instrumentation and the exact numbers:
+  # critic proxy stayed disabled for the entire arc in both a loaded and
+  # an unloaded repro, first activating at path index 20 in both, ~82s
+  # in, at essentially identical timing regardless of payload - a
+  # structural gap, not a payload-dependent one). Lowered to 3 to match
+  # descent_mode's already-validated fix below, for the same reason.
+  path_align_offset: 3
+
+ramp_mode:
+  # TODO(phase 5): tune these against actual slip/stability data from
+  # phase 6 rather than guessing - start conservative, loosen once
+  # there's margin to spare. Phase 8's validation matrix ran against
+  # these AS-IS numbers rather than tuning them first, and found the
+  # opposite of "margin to spare" for at least one real configuration
+  # (loaded payload can't climb the sharp-world ramp at all - see
+  # README's phase 8 section) - so these values still need a real
+  # tuning pass, they have not been validated as adequate.
+  #
+  # ASCENT only now (DESCENT split into its own descent_mode below,
+  # both used to share this profile - see RAMP_STATE_PROFILE's own
+  # comment in nav2_param_switcher_node.py for why). Left at its
+  # original values: ascent has been proven driftless (zero ground-
+  # truth lateral drift) at these exact numbers across every test this
+  # project has run, so there is no reason to touch them.
+  max_vel_x: 0.35
+  max_vel_theta: 0.4
+  heading_tolerance_deg: 5.0
+  # Phase 7: descent_brake_node.py's acceleration ceiling for DESCENT
+  # (its "unrestricted" starting point, throttled down live in response
+  # to /wheel_slip - see that node's docstring). descent_brake_node.py
+  # reads this from the 'ramp_mode' key BY NAME, independent of whatever
+  # profile nav2_param_switcher_node.py actually pushes for DESCENT -
+  # kept here unchanged for exactly that reason, even though ASCENT is
+  # the only FSM state that applies the rest of this profile now.
+  # Matches nav2_params.yaml's static FollowPath.ax_max/az_max exactly.
+  max_accel_x: 2.0
+  max_accel_theta: 3.0
+  path_align_weight: 14.0
+  path_align_power: 1
+  path_align_offset: 20
+
+descent_mode:
+  # New profile (cross-track-error fix): DESCENT no longer shares
+  # ramp_mode with ASCENT.
+  #
+  # THE ACTUAL ROOT CAUSE, found after three tuning attempts that all
+  # failed to meaningfully help (weight 14->60 at power=1; weight=8/
+  # power=2; then heading_tolerance loosened to 20 deg + max_vel_theta
+  # raised to 0.6 - see git history / validation/phase8/
+  # crosstrack_diagnosis/ for all three): read nav2_mppi_controller's
+  # own PathAlignCritic source (path_align_critic.cpp) directly rather
+  # than keep guessing. Its score() function returns IMMEDIATELY - zero
+  # cost, critic fully disabled - unless the robot has already advanced
+  # at least `offset_from_furthest` points into the path
+  # (`if (path_segments_count < offset_from_furthest_) return;`).
+  # nav2_params.yaml's static default is offset_from_furthest=20. The
+  # descent path this project generates for a ~6 m leg at 0.4 m
+  # waypoint spacing has roughly 15 points TOTAL - path_segments_count
+  # can never reach 20, so PathAlignCritic was structurally disabled
+  # for the ENTIRE descent leg the whole time, on every one of the
+  # three prior attempts - explaining why raising its weight/power had
+  # no real effect: there was no active critic to weight in the first
+  # place. heading_tolerance/max_vel_theta are kept loosened from the
+  # third attempt (a reasonable improvement on their own terms, and
+  # necessary for the robot to have the steering authority to act on
+  # PathAlignCritic once it's actually active) but the fix that
+  # actually matters is offset_from_furthest.
+  max_vel_x: 0.35
+  max_vel_theta: 0.6
+  heading_tolerance_deg: 20.0
+  path_align_weight: 60.0
+  path_align_power: 1
+  # Low enough that path_segments_count clears it almost immediately
+  # for this project's short descent legs (~15-20 points), so the
+  # critic is actually live for nearly the whole leg instead of never
+  # activating at all. Matches PathFollowCritic's own existing default
+  # (5) as a sanity-checked starting point, not an arbitrary number.
+  path_align_offset: 3
+
+transition_mode:
+  # Applied only within TRANSITION state, briefly, around each break point
+  max_vel_x: 0.2
+  max_vel_theta: 0.2
+  heading_tolerance_deg: 3.0
+  path_align_weight: 14.0
+  path_align_power: 1
+  path_align_offset: 20
+
+halt_mode:
+  # Added for phase 3 (not in the original placeholder set): HALT needs a
+  # real, planner-enforced zero, not just a guess. /cmd_vel_scale going to
+  # 0.0 (state_machine_node.py) helps only once something consumes that
+  # topic (nothing does yet - see README known gaps); driving MPPI's own
+  # vx_max/wz_max to zero makes the controller itself refuse to produce a
+  # moving trajectory regardless of what's upstream, so this is a real
+  # safety value, not a placeholder.
+  max_vel_x: 0.0
+  max_vel_theta: 0.0
+  heading_tolerance_deg: 3.0
+  # Irrelevant while vx_max=0 (no trajectory can move), kept at the
+  # flat baseline for consistency.
+  path_align_weight: 14.0
+  path_align_power: 1
+  path_align_offset: 20

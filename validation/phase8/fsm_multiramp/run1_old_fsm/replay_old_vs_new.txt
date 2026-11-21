@@ -1,0 +1,8 @@
+replay of state_machine_node.ORIGINAL.py: 129 transitions (live run recorded 30)
+non-HALT state sequence  replay: APPROACH > TRANSITION > EXIT > DESCENT > EXIT > DESCENT > EXIT
+non-HALT state sequence  live:   APPROACH > TRANSITION > EXIT > DESCENT > EXIT > DESCENT > EXIT
+IDENTICAL non-HALT sequence to the live run
+replay of state_machine_node.py: 130 transitions (live run recorded 30)
+non-HALT state sequence  replay: APPROACH > TRANSITION > EXIT > TRANSITION > EXIT > DESCENT > EXIT
+non-HALT state sequence  live:   APPROACH > TRANSITION > EXIT > DESCENT > EXIT > DESCENT > EXIT
+DIFFERS from the live non-HALT sequence

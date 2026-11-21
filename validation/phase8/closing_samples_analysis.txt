@@ -1,0 +1,64 @@
+
+SCOPED, new batch (n=8)
+   #  GT max|y| m                                 GT verdict  overall  HALTs  stall/slip/margin  min RTF
+   1         2.01   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL      9             7/46/1    0.992  (RTF < 0.995)
+   2         1.93   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL     32             5/88/1    0.996
+   3         0.98        PASS (max |y|=0.98 m, n=29 samples)     FAIL      9             4/14/0    0.995
+   4         1.00        PASS (max |y|=1.00 m, n=29 samples)     FAIL     12             3/18/0    0.997
+   5         1.15        PASS (max |y|=1.15 m, n=28 samples)     FAIL      9             2/17/0    0.997
+   6         2.36   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL      5             3/31/0    0.997
+   7         0.59        PASS (max |y|=0.59 m, n=16 samples)     FAIL     11             2/19/0    0.993  (RTF < 0.995)
+   8         1.07        PASS (max |y|=1.07 m, n=29 samples) MARGINAL      6             3/16/0    0.999
+
+======== PART 1: curved / normal / unloaded ========
+  ORIGINAL detector                  n= 6  GT fail  0/6  =   0%  (Wilson 95% 0-39%)   max|y| mean 0.90 sd 0.26 median 0.98 range 0.39-1.11
+  FIXED detector (rotation check everywhere) n=10  GT fail 10/10 = 100%  (Wilson 95% 72-100%)   max|y| mean 2.49 sd 0.63 median 2.41 range 1.74-3.85
+  SCOPED, first batch                n= 6  GT fail  2/6  =  33%  (Wilson 95% 10-70%)   max|y| mean 1.23 sd 0.88 median 0.89 range 0.38-2.54
+  SCOPED, new batch                  n= 8  GT fail  3/8  =  38%  (Wilson 95% 14-69%)   max|y| mean 1.39 sd 0.63 median 1.11 range 0.59-2.36
+  SCOPED, ALL                        n=14  GT fail  5/14 =  36%  (Wilson 95% 16-61%)   max|y| mean 1.32 sd 0.72 median 1.03 range 0.38-2.54
+  SCOPED, ALL, runs with RTF >= 0.995 n=11  GT fail  4/11 =  36%  (Wilson 95% 15-65%)   max|y| mean 1.39 sd 0.71 median 1.07 range 0.38-2.54
+  (scoped runs under the 0.995 RTF bar: 3; min RTF over scoped runs 0.992; any starved: False)
+
+  --- ALL scoped runs (n=14) ---
+    vs ORIGINAL (0/6)  : failure-rate difference +36 points, Newcombe 95% CI [-8, +61];  Fisher p = 0.2604;  max|y| mean diff +0.42 m, bootstrap 95% CI [+0.03, +0.84], Mann-Whitney p = 0.4442
+    vs FIXED (10/10)   : failure-rate difference -64 points, Newcombe 95% CI [-84, -27];  Fisher p = 0.0020;  max|y| mean diff -1.17 m, bootstrap 95% CI [-1.69, -0.67], Mann-Whitney p = 0.0031
+
+  --- scoped runs with RTF >= 0.995 (n=11) ---
+    vs ORIGINAL (0/6)  : failure-rate difference +36 points, Newcombe 95% CI [-8, +65];  Fisher p = 0.2374;  max|y| mean diff +0.49 m, bootstrap 95% CI [+0.06, +0.94], Mann-Whitney p = 0.3011
+    vs FIXED (10/10)   : failure-rate difference -64 points, Newcombe 95% CI [-85, -24];  Fisher p = 0.0039;  max|y| mean diff -1.10 m, bootstrap 95% CI [-1.66, -0.56], Mann-Whitney p = 0.0067
+
+  in-DESCENT stall latch vs outcome across original + scoped + fixed (30 runs): with latch 16 runs, 15 pass / 1 fail;  without 14 runs, 0 pass / 14 fail;  Fisher p = 2.1e-07
+  scoped runs that had the in-DESCENT latch: 10/14
+
+======== PART 2: the two curved cells whose HALT verdict worsened ========
+
+  --- curved / 0.45 / unloaded (scoped matrix run: 13 HALTs) ---
+    run                             HALTs   overall  GT max|y|  stall/slip  min RTF
+    old detector (matrix run)           3  MARGINAL       0.31        3/14    0.994
+    fixed detector (matrix run)         4  MARGINAL       0.23        3/10    0.996
+    SCOPED matrix run                  13      FAIL       0.14        3/27    0.995
+    SCOPED repeat 1                     3  MARGINAL       0.35         3/9    0.997
+    SCOPED repeat 2                     7  MARGINAL       0.39        3/13    0.991
+    SCOPED repeat 3                     8      FAIL       0.30        3/15    0.991
+    SCOPED repeat 4                     7  MARGINAL       0.27        5/18    0.998
+    SCOPED repeat 5                    17      FAIL       0.05        4/21    0.993
+    SCOPED repeat 6                     9      FAIL       0.18        3/19    0.995
+    SCOPED repeat 7                     7  MARGINAL       0.41        4/14    0.997
+    SCOPED repeat 8                    10      FAIL       0.19        4/17    0.998
+    scoped runs   : n=9 HALTs [3, 7, 7, 7, 8, 9, 10, 13, 17] mean 9.0, HALT_THRASH (>=8) in 5/9 (Wilson (27, 81)%), overall FAIL 5/9, GT fails 0/9
+    earlier runs  : n=2 HALTs [3, 4] mean 3.5, HALT_THRASH (>=8) in 0/2 (Wilson (0, 66)%), overall FAIL 0/2, GT fails 0/2   (old detector / fixed detector / prior matrix; single runs)
+    scoped HALTs mean 9.0 vs earlier 3.5;  Mann-Whitney p = 0.095 (n=9 vs 2: very low power)
+
+  --- curved / 0.45 / loaded (scoped matrix run: 8 HALTs) ---
+    run                             HALTs   overall  GT max|y|  stall/slip  min RTF
+    old detector (matrix run)           3  MARGINAL       0.93        1/15    0.991
+    fixed detector (matrix run)         2  MARGINAL       1.07        2/17    0.997
+    SCOPED matrix run                   8      FAIL       1.02        1/20    0.998
+    SCOPED repeat 1                     1  MARGINAL       0.94        1/17    0.999
+    SCOPED repeat 2                     1  MARGINAL       0.96        1/14    0.999
+    SCOPED repeat 3                     2  MARGINAL       1.08        1/15    0.997
+    SCOPED repeat 4                     7  MARGINAL       1.04        2/17    0.999
+    scoped runs   : n=5 HALTs [1, 1, 2, 7, 8] mean 3.8, HALT_THRASH (>=8) in 1/5 (Wilson (4, 62)%), overall FAIL 1/5, GT fails 0/5
+    earlier runs  : n=2 HALTs [2, 3] mean 2.5, HALT_THRASH (>=8) in 0/2 (Wilson (0, 66)%), overall FAIL 0/2, GT fails 0/2   (old detector / fixed detector / prior matrix; single runs)
+    scoped HALTs mean 3.8 vs earlier 2.5;  Mann-Whitney p = 1.000 (n=5 vs 2: very low power)
+    (the very first matrix, before any of this work, is recorded in the README only: unloaded 1 HALT / 0.36 m MARGINAL; loaded 9 HALTs / 0.93 m FAIL HALT_THRASH)

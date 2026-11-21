@@ -1,0 +1,13 @@
+run                        ok  | ramp 1 (dur, max|y|, s in ASCENT/TRANSITION, HALTs, min margin, max slip) | ramp 2 | profile-match | RTF
+loaded_current_r1          Y   |    70s y0.01 asc   0 trn  67 slipH 0 stallH 0 m0.46 s1.0 |    70s y0.02 asc   0 trn  68 slipH 0 stallH 1 m0.46 s0.9 |  514/514 | 0.916
+loaded_current_r2          Y   |    70s y0.01 asc   0 trn  67 slipH 0 stallH 0 m0.46 s0.8 |    70s y0.00 asc   0 trn  66 slipH 0 stallH 1 m0.46 s1.2 |  511/511 | 0.922
+loaded_current_r3          Y   |    70s y0.01 asc   0 trn  67 slipH 1 stallH 0 m0.46 s1.9 |    71s y0.01 asc   0 trn  67 slipH 0 stallH 1 m0.46 s0.9 |  514/514 | 0.921
+loaded_gated_r1            Y   |    44s y0.00 asc  33 trn   8 slipH 0 stallH 0 m0.46 s0.8 |    44s y0.01 asc  32 trn   9 slipH 0 stallH 0 m0.46 s0.7 |  419/419 | 0.915
+loaded_gated_r2            Y   |    44s y0.01 asc  32 trn   9 slipH 1 stallH 0 m0.46 s3.5 |    45s y0.00 asc  33 trn   9 slipH 2 stallH 0 m0.46 s3.7 |  398/398 | 0.935
+loaded_gated_r3            Y   |    44s y0.00 asc  33 trn   9 slipH 0 stallH 0 m0.46 s1.0 |    46s y0.01 asc  34 trn   8 slipH 6 stallH 0 m0.46 s3.7 |  402/402 | 0.921
+unloaded_current_r1        Y   |    69s y0.00 asc   0 trn  66 slipH 0 stallH 0 m0.87 s0.8 |    70s y0.01 asc   0 trn  67 slipH 0 stallH 1 m0.87 s1.0 |  516/516 | 0.921
+unloaded_current_r2        Y   |    70s y0.01 asc   0 trn  67 slipH 0 stallH 0 m0.87 s0.9 |    73s y0.01 asc   0 trn  69 slipH 1 stallH 2 m0.87 s2.5 |  525/525 | 0.905
+unloaded_current_r3        Y   |    69s y0.00 asc   0 trn  66 slipH 0 stallH 0 m0.87 s0.8 |    70s y0.00 asc   0 trn  67 slipH 0 stallH 1 m0.87 s1.2 |  518/518 | 0.923
+unloaded_gated_r1          Y   |    45s y0.00 asc  33 trn  10 slipH 0 stallH 0 m0.87 s1.0 |    44s y0.01 asc  33 trn   8 slipH 0 stallH 0 m0.87 s0.8 |  407/407 | 0.914
+unloaded_gated_r2          Y   |    45s y0.01 asc  32 trn  10 slipH 0 stallH 0 m0.87 s1.0 |    44s y0.01 asc  34 trn   7 slipH 0 stallH 0 m0.87 s0.8 |  399/399 | 0.915
+unloaded_gated_r3          Y   |    44s y0.02 asc  34 trn   7 slipH 0 stallH 0 m0.87 s0.9 |    44s y0.01 asc  32 trn   9 slipH 0 stallH 0 m0.87 s0.8 |  395/395 | 0.925

@@ -1,0 +1,52 @@
+== run1_old_fsm/evidence_unloaded.json: ok=False  legs:
+   L1: action result status 4; odom_disp 26.478 GT 26.476 (GT-odom -0.002) final gz [27.476, 0.001, 0.275] ok=True
+   L2: reached target; odom_disp 27.101 GT 26.574 (GT-odom -0.527) final gz [54.05, 0.001, 3.475] ok=True
+   L3: reached target; odom_disp 21.495 GT 21.029 (GT-odom -0.465) final gz [75.08, -0.002, 6.675] ok=True
+   L4: action result status 4; odom_disp -10.435 GT -26.931 (GT-odom -16.497) final gz [48.113, -0.022, 3.475] ok=False
+== /ramp_state transitions (pitch: negative = nose up):
+   t=   41.2   APPROACH -> HALT       pitch=  -0.00 vx= 0.538 odom_x= 17.76 gz=(18.62, z=0.275) bp_dist=-1.0 conf=0.1
+   t=   51.3       HALT -> APPROACH   pitch=   0.00 vx= 0.000 odom_x= 17.84 gz=(18.85, z=0.275) bp_dist=-1.0 conf=0.11
+   t=   76.0   APPROACH -> TRANSITION pitch=  -5.16 vx= 0.389 odom_x= 27.26 gz=(28.1, z=0.293) bp_dist=0.47 conf=0.93
+   t=   94.1 TRANSITION -> HALT       pitch= -16.00 vx= 0.185 odom_x= 30.58 gz=(31.42, z=1.089) bp_dist=0.46 conf=0.95
+   t=   94.2       HALT -> TRANSITION pitch= -16.00 vx=-0.000 odom_x= 30.59 gz=(31.42, z=1.089) bp_dist=-1.0 conf=0.91
+   t=  106.3 TRANSITION -> HALT       pitch= -16.00 vx= 0.165 odom_x= 32.73 gz=(33.45, z=1.671) bp_dist=-1.0 conf=0.93
+   t=  106.4       HALT -> TRANSITION pitch= -16.00 vx=-0.000 odom_x= 32.73 gz=(33.45, z=1.671) bp_dist=-1.0 conf=0.93
+   t=  133.5 TRANSITION -> HALT       pitch= -16.00 vx= 0.159 odom_x= 37.62 gz=(38.03, z=2.986) bp_dist=0.58 conf=0.95
+   t=  133.6       HALT -> TRANSITION pitch= -16.00 vx=-0.000 odom_x= 37.63 gz=(38.03, z=2.986) bp_dist=0.86 conf=0.95
+   t=  145.1 TRANSITION -> EXIT       pitch=  -4.91 vx= 0.200 odom_x= 39.66 gz=(40.13, z=3.451) bp_dist=-1.0 conf=0.91
+   t=  152.0       EXIT -> HALT       pitch=  -0.00 vx= 0.476 odom_x= 42.43 gz=(42.76, z=3.475) bp_dist=-1.0 conf=0.88
+   t=  162.0       HALT -> EXIT       pitch=  -0.00 vx= 0.000 odom_x= 42.50 gz=(42.98, z=3.475) bp_dist=-1.0 conf=0.88
+   t=  167.3       EXIT -> HALT       pitch=   0.00 vx= 0.511 odom_x= 44.36 gz=(44.7, z=3.475) bp_dist=-1.0 conf=0.79
+   t=  177.3       HALT -> EXIT       pitch=  -0.00 vx= 0.000 odom_x= 44.44 gz=(44.91, z=3.475) bp_dist=-1.0 conf=0.79
+   t=  182.5       EXIT -> HALT       pitch=  -0.00 vx= 0.547 odom_x= 46.30 gz=(46.71, z=3.475) bp_dist=-1.0 conf=0.1
+   t=  184.3       HALT -> EXIT       pitch=   0.00 vx= 0.000 odom_x= 46.39 gz=(46.87, z=3.475) bp_dist=-1.0 conf=0.1
+   t=  200.8       EXIT -> HALT       pitch=   0.00 vx= 0.251 odom_x= 53.56 gz=(53.71, z=3.475) bp_dist=1.87 conf=0.99
+   t=  200.9       HALT -> EXIT       pitch=   0.00 vx= 0.091 odom_x= 53.58 gz=(54.04, z=3.475) bp_dist=1.87 conf=0.99
+   t=  208.3       EXIT -> DESCENT    pitch=  -5.06 vx= 0.534 odom_x= 55.75 gz=(56.1, z=3.494) bp_dist=0.52 conf=0.97
+   t=  208.9    DESCENT -> HALT       pitch=  -6.66 vx= 0.321 odom_x= 55.94 gz=(56.39, z=3.522) bp_dist=0.49 conf=0.96
+   t=  209.0       HALT -> DESCENT    pitch=  -6.89 vx= 0.202 odom_x= 55.97 gz=(56.39, z=3.522) bp_dist=1.2 conf=0.98
+   t=  251.3    DESCENT -> EXIT       pitch=  -4.76 vx= 0.271 odom_x= 68.13 gz=(67.99, z=6.643) bp_dist=-1.0 conf=0.91
+   t=  269.5       EXIT -> HALT       pitch=   0.00 vx= 0.131 odom_x= 75.07 gz=(74.72, z=6.675) bp_dist=4.85 conf=0.0
+   t=  269.6       HALT -> EXIT       pitch=   0.00 vx= 0.000 odom_x= 75.07 gz=(75.08, z=6.675) bp_dist=4.85 conf=0.0
+   t=  306.1       EXIT -> DESCENT    pitch=   5.02 vx= 0.517 odom_x= 72.47 gz=(68.17, z=6.654) bp_dist=-1.0 conf=0.83
+   t=  348.6    DESCENT -> EXIT       pitch=   4.97 vx= 0.302 odom_x= 67.74 gz=(56.38, z=3.519) bp_dist=0.51 conf=0.97
+   t=  353.4       EXIT -> HALT       pitch=   0.00 vx= 0.431 odom_x= 67.11 gz=(54.8, z=3.475) bp_dist=-1.0 conf=0.88
+   t=  353.5       HALT -> EXIT       pitch=   0.00 vx= 0.304 odom_x= 67.10 gz=(54.8, z=3.475) bp_dist=-1.0 conf=0.88
+   t=  370.2       EXIT -> HALT       pitch=   0.00 vx= 0.115 odom_x= 64.64 gz=(48.23, z=3.475) bp_dist=-1.0 conf=0.93
+   t=  370.3       HALT -> EXIT       pitch=   0.00 vx= 0.000 odom_x= 64.64 gz=(48.23, z=3.475) bp_dist=1.4 conf=0.98
+== labels vs physical motion (ground-truth dz/dt, +-1.6 s window):
+     APPROACH: level 132   (samples at 2 Hz)
+   TRANSITION: climbing 126, level 12   (samples at 2 Hz)
+         EXIT: descending 1, level 237   (samples at 2 Hz)
+      DESCENT: climbing 81, descending 83, level 6   (samples at 2 Hz)
+         HALT: level 65   (samples at 2 Hz)
+   MISLABELLED samples (DESCENT while physically climbing / ASCENT|TRANSITION while descending): 81, t 210.52..250.52 s, odom_x 56.2..67.91
+== live controller parameters vs the profile of the current state (samples where the state has been unchanged >= 2.0 s):
+     APPROACH -> flat_mode        125/125 samples carry the expected profile; ax_max 2.00..2.00
+         HALT -> halt_mode        48/48 samples carry the expected profile; ax_max 2.00..2.00
+   TRANSITION -> transition_mode  122/122 samples carry the expected profile; ax_max 2.00..2.00
+         EXIT -> flat_mode        199/199 samples carry the expected profile; ax_max 0.40..2.00
+      DESCENT -> descent_mode     161/161 samples carry the expected profile; ax_max 0.40..1.13
+== sim RTF from /clock (5 s windows, n=74): mean 0.916 median 0.914 min 0.889 max 0.952
+   by state at window end: APPROACH 0.927 (n=13), HALT 0.923 (n=6), TRANSITION 0.918 (n=14), EXIT 0.913 (n=24), DESCENT 0.906 (n=17)
+== HALT events: 12   health: {'n': 16, 'min_rtf': 0.894, 'mean_rtf': 0.916, 'max_load1': 5.52, 'n_low_rtf': 2, 'starved': True}

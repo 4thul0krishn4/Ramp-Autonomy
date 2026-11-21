@@ -1,0 +1,591 @@
+<?xml version="1.0"?>
+<!--
+  robot.urdf.xacro
+
+  Simple 4WD differential-drive-ish AMR base (skid-steer via 4 wheel
+  joints) with an IMU, TWO 2D LiDARs (one rolled 90 deg for ramp-slope
+  profiling, one level for 360 deg obstacle detection - see their own
+  joint comments below for why two, not one doing double duty), and a
+  PAYLOAD LINK whose mass and
+  forward/back CG offset are xacro args. This is the knob phase 2
+  needs: re-spawn the same robot loaded/unloaded/CG-shifted just by
+  changing payload_mass and payload_cg_offset at launch time, instead
+  of hand-editing URDF per test run.
+
+  This is intentionally a minimal placeholder chassis (box body, 4
+  cylinder wheels) - swap in your real Flo-style chassis mesh later
+  without touching the payload/sensor plumbing below.
+-->
+<robot name="ramp_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="payload_mass" default="0.0"/>
+  <xacro:arg name="payload_cg_offset" default="0.0"/>
+  <!-- detachable_payload (delivery session): false (default) = the payload is this link, lumped into the chassis exactly as in every validated run. true = the payload is a SEPARATE
+       model (sdf/payload_box.sdf.xacro, spawned by ramp_world.launch.py) held to the chassis by a gz-sim DetachableJoint declared at the end of this file; this link then carries no
+       mass and no collision (the payload model owns both), so nothing else about the robot changes. -->
+  <xacro:arg name="detachable_payload" default="false"/>
+  <!-- cargo_mode (unsecured-cargo physics DEMO, opt-in, isolated from every validated result - see docs/construction_site_design.md "Unsecured cargo demo
+       mode"): "secured" (default) = today's exact behavior, completely unchanged regardless of detachable_payload - verified byte-identical (see
+       validation/phase8/mesh_swap/cargo_demo/). "loose" = the payload is a separate free rigid body resting on the chassis from spawn (same payload_box
+       model detachable_payload already uses, but with NO DetachableJoint ever declared - it was never secured, so there is nothing to release), able to
+       slide/tip under gravity, contact friction and the robot's own motion. No production/validation script anywhere in this project passes anything but
+       the default - grep the tree for "cargo_mode" to confirm. -->
+  <xacro:arg name="cargo_mode" default="secured"/>
+
+  <xacro:property name="base_mass" value="40.0"/>
+  <xacro:property name="base_length" value="0.8"/>
+  <xacro:property name="base_width" value="0.6"/>
+  <xacro:property name="base_height" value="0.25"/>
+  <xacro:property name="wheel_radius" value="0.12"/>
+  <xacro:property name="wheel_width" value="0.08"/>
+  <xacro:property name="wheel_x_off" value="0.28"/>
+  <xacro:property name="wheel_y_off" value="0.35"/>
+  <xacro:property name="wheel_z" value="0.0"/>
+
+  <!-- ===================== Chassis mesh swap (public-showcase cosmetic pass) =====================
+       VISUAL ONLY - see base_link's <visual> and the wheel macro's <visual> below. Every <collision>/<inertial> block and every link/joint name in this file is
+       untouched; the stability monitor, EKF, stall detector and MPPI profiles all key off those names/frames and none of them changed (verified: rendered-URDF
+       diff with every <visual> stripped is byte-identical to before this block was added - validation/phase8/mesh_swap/).
+       Meshes: DFKI-NI's mir_robot (BSD-3-Clause) MiR100 visual meshes, taken as-is (geometry only - STL carries no material, so the real colors are
+       reproduced below as plain <material> definitions; no URDF/plugins/collision from that project) - see meshes/mir100/THIRD_PARTY_NOTICE.md for the exact
+       source commit, license text, and why this is MiR100 (not MiR250 - the requested model): the named source only publishes MiR100 meshes and no
+       properly-licensed open-source MiR250 mesh package could be found; confirmed with the user before substituting, labeled honestly throughout.
+       Real MiR100 reference dimensions (mir_description/urdf/include/mir_100_v1.urdf.xacro's own box_inertial/wheel properties, the same real-world scale as
+       these constants) - used only to compute a per-axis scale factor from the real mesh down to THIS robot's own collision box/cylinder dimensions above, so
+       the visual matches the already-validated collision geometry rather than the other way around. -->
+  <xacro:property name="mir_base_x" value="0.9"/>     <!-- box_inertial x -->
+  <xacro:property name="mir_base_y" value="0.58"/>    <!-- box_inertial y -->
+  <xacro:property name="mir_base_z" value="0.3"/>     <!-- box_inertial z -->
+  <xacro:property name="mir_base_bottom_gap" value="0.05"/>  <!-- mir_100_base.stl's own local origin sits this far BELOW the chassis box's bottom face (from the source xacro's own box_inertial origin z=0.20, half-height 0.15 -> box bottom at local z=+0.05): unlike the Husky meshes, this one is not bottom-anchored at its own origin -->
+  <xacro:property name="mir_wheel_r" value="0.0625"/> <!-- mir_100_act_wheel_radius -->
+  <xacro:property name="mir_wheel_w" value="0.032"/>  <!-- mir_100_act_wheel_width; wheel.stl is authored centered on the wheel joint's own y (rolling) axis, no extra rotation needed -->
+
+  <!-- BUG FIX (post-mesh-swap): both LiDAR sensors were floating visibly clear of the chassis in live GUI captures. Root-caused, not assumed: the
+       dynamic_pose/info ground-truth pose of both sensor frames was confirmed bit-for-bit identical before and after a live payload detach event, and
+       both exactly match their URDF-specified fixed-joint offsets (lidar_sensor 0.295 m, obstacle_lidar_sensor 0.620 m above base_footprint - i.e.
+       exactly base_height/2+0.05 and 0.5 above base_link respectively) - the joints themselves are correct and static, ruling out a TF/physics issue.
+       The actual cause: those two offsets were computed from base_height/2 (0.125 m), the OLD placeholder BOX's own half-height - correct for a simple
+       box visual, but the real MiR100 mesh is a lower, rounded-top chassis that does NOT fill that same bounding box. Measured directly from the mesh
+       (mir_100_base.stl's own raw vertices, in a small neighbourhood of each sensor's mount x/y, scaled and offset the same way the chassis visual
+       above is): the real surface sits at 0.095 m (under the forward-mounted ramp LiDAR) and 0.071 m (under the centred obstacle LiDAR), both well
+       below the 0.125 m the old offsets assumed - see validation/phase8/lidar_mount_fix/README.md for the full measurement and the mesh-query script.
+       Neither lidar_joint nor obstacle_lidar_joint's own origin changes - that's deliberate, not an oversight: those joints also position each
+       sensor's functional ray-casting frame (the <gazebo><sensor> block is a child of the same link), and phase 4's own measured accuracy numbers
+       (README.md's "Measured accuracy" table) were validated against the mount height as originally specified - moving it would be a real, untested
+       change to sensor geometry, not a cosmetic one. Instead, only the <visual> cylinder's OWN local origin inside each link shifts, independent of
+       the link/joint/sensor frame: lidar_link's visual drops by (base_height/2+0.05) - (mir_lidar_surface_z+0.05) = 0.030 m to rest on the real
+       surface. obstacle_lidar_link keeps its visual at the sensor's own height (0.5 m is a genuine functional requirement - clearing the payload
+       box's own top, 0.425 m above base_link, present even when payload_mass=0, see the payload_link comment below - lowering it would reopen the
+       exact payload-occlusion gap it was added to close) and instead gains a new, purely cosmetic mounting-mast visual spanning from the real chassis
+       surface up to the sensor, so the required height no longer looks like it's floating with nothing holding it up.
+
+       CORNER RELOCATION (phase 8 re-calibration, supersedes the fix above): both sensors move to corner mounts, and this time the joints' own
+       origins move - the explicit goal is changing what each sensor functionally sees, not just where it's drawn (see
+       validation/phase8/corner_mount/README.md for the full design rationale and re-validation). Measured directly from mir_100_base.stl
+       (validation/phase8/corner_mount/mesh_query_debug.py): the chassis top is a genuinely flat deck at mesh-local z=0.354 (-> 0.1283 m rel.
+       base_link) spanning a wide area inboard of each corner - confirmed, not assumed, by sampling two widely-separated corner regions (front-left
+       and rear-right) and finding the SAME maximum vertex height in both while each window's minimum differed, which is only possible if a real
+       flat plateau spans both; a true-corner sanity point (right at the chassis edge, outside the deck) measured a distinct, lower 0.095 m,
+       consistent with the old center-mount-era measurement above. Both new corner mounts sit on this flat deck, so one property now covers both. -->
+  <xacro:property name="mir_corner_deck_z" value="0.1283"/>
+  <!-- First corner-mount attempt placed the ramp LiDAR at (x=0.35, y=0.22, on the flat deck + a 0.05 m standoff) and re-validation caught a real
+       regression: every break-point measurement collapsed to ~0.04 m regardless of true distance (see validation/phase8/corner_mount/README.md
+       section 3) - the sensor's own forward-downward cone (-80..45 deg) was mostly filled with ~0.08-0.10 m self-returns off the chassis's own flat
+       deck, which is wide enough at y=0.22 to extend forward underneath the sensor at that standoff (confirmed by profiling the mesh along x at
+       several y - validation/phase8/corner_mount/mesh_profile.py). The OLD centre mount never had this problem because its real-world standoff
+       (joint 0.175 m - real surface 0.095 m = 0.08 m, never actually 0.05 m as originally assumed - Task 5's fix was visual-only) was taller AND it
+       sat on the lower sloped surface, not the broad flat deck. Fix: push the mount forward to x=0.39, where the real surface at y=0.22 has already
+       dropped to the same low sloped-edge height (0.096 m) the old mount sat on, and use the SAME ~0.08 m standoff the old mount always had -
+       replicating the geometry that was already proven self-occlusion-safe, just shifted laterally to a genuine corner. -->
+  <xacro:property name="mir_ramp_corner_surface_z" value="0.096"/>
+  <!-- obstacle_lidar_joint's z stays at 0.5 (unchanged by the corner move - see that joint's own comment below): clearing the payload box's top is
+       a height requirement independent of lateral position, and relocating to a corner does not relax it - if anything a corner mount makes
+       payload occlusion WORSE at low height, since the payload would then block one wide contiguous arc of the 360 deg ring instead of a centered
+       band. -->
+  <xacro:property name="obstacle_lidar_mount_z" value="0.5"/>
+
+  <material name="chassis_grey"><color rgba="0.3 0.3 0.35 1"/></material>
+  <material name="mir_white"><color rgba="1 1 1 1"/></material>       <!-- MiR100's own real chassis color (material_white, common_properties.urdf.xacro) -->
+  <material name="mir_dark_grey"><color rgba="0.3 0.3 0.3 1"/></material>  <!-- MiR100's own real wheel color (material_dark_grey) -->
+  <material name="wheel_black"><color rgba="0.05 0.05 0.05 1"/></material>
+  <material name="payload_orange"><color rgba="0.9 0.55 0.1 1"/></material>
+
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+    <inertial>
+      <mass value="${base_mass}"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="1.8" iyy="2.4" izz="3.0" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <!-- Real MiR100 chassis mesh, scaled per-axis to this robot's own base_length/width/height (see the mir_base_* properties above). z-shifted by
+         -base_height/2 - mir_base_bottom_gap*(base_height/mir_base_z): the mesh's own local origin sits mir_base_bottom_gap below the box's bottom face (not
+         bottom-anchored at its own origin like the Husky meshes were - see mir_base_bottom_gap's own comment above), so that gap is scaled and added on top of
+         the usual half-height shift to land the mesh flush with base_link's box collision, which is centered on base_link's own origin. -->
+    <visual>
+      <origin xyz="0 0 ${-base_height/2 - mir_base_bottom_gap*(base_height/mir_base_z)}" rpy="0 0 0"/>
+      <geometry><mesh filename="$(find ramp_autonomy_description)/meshes/mir100/mir_100_base.stl" scale="${base_length/mir_base_x} ${base_width/mir_base_y} ${base_height/mir_base_z}"/></geometry>
+      <material name="mir_white"/>
+    </visual>
+    <collision>
+      <geometry><box size="${base_length} ${base_width} ${base_height}"/></geometry>
+    </collision>
+  </link>
+
+  <!-- ===================== Payload link: THE key phase-2 knob =====================
+       Mass and forward/back CG offset are set at launch/spawn time via
+       payload_mass / payload_cg_offset xacro args (see ramp_world.launch.py).
+       Mounted above base_link; offset shifts it fore/aft to emulate an
+       unevenly-loaded pallet rather than always assuming perfect centering. -->
+  <joint name="payload_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="payload_link"/>
+    <origin xyz="$(arg payload_cg_offset) 0 ${base_height/2 + 0.15}" rpy="0 0 0"/>
+  </joint>
+
+  <xacro:property name="detachable" value="${'$(arg detachable_payload)' == 'true'}"/>
+  <!-- loose (cargo_mode:=loose, see the xacro:arg comment above): defaults to false ('secured', cargo_mode's own default) whenever the arg is left at its
+       default - so separate_payload below reduces to exactly "detachable" (today's/the delivery session's expression, unchanged) unless a caller
+       explicitly opts in. -->
+  <xacro:property name="loose" value="${'$(arg cargo_mode)' == 'loose'}"/>
+  <!-- true whenever the REAL payload is a separate spawned model rather than this link (either detachable_payload's secured-until-released case, or
+       cargo_mode:=loose's never-secured case) - this link then carries no mass/visual/collision either way, exactly as detachable_payload alone did
+       before cargo_mode existed. -->
+  <xacro:property name="separate_payload" value="${detachable or loose}"/>
+  <link name="payload_link">
+    <inertial>
+      <mass value="${0.0 if separate_payload else float('$(arg payload_mass)')}"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.05" iyy="0.05" izz="0.05" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+    <!-- The payload box is only RENDERED when there is a payload (payload_mass > 0): an unloaded robot should look unloaded. Only this visual
+         is conditional - the inertial above and the collision box below are unchanged for every payload_mass (physics/mass handling untouched). -->
+    <xacro:property name="payload_mass_val" value="$(arg payload_mass)"/>
+    <xacro:if value="${float(payload_mass_val) > 0.0 and not separate_payload}">
+      <visual>
+        <geometry><box size="0.5 0.4 0.3"/></geometry>
+        <material name="payload_orange"/>
+      </visual>
+    </xacro:if>
+    <xacro:unless value="${separate_payload}">
+      <collision>
+        <geometry><box size="0.5 0.4 0.3"/></geometry>
+      </collision>
+    </xacro:unless>
+  </link>
+
+  <!-- ===================== Side-mounted delivery chute (phase 8, replaces the top-release point) =====================
+       Only rendered when there is a real, separate payload to dispatch (separate_payload: detachable or loose) - the lumped, non-separable payload_joint
+       above is UNCHANGED (still top-centre) on purpose: it backs unrelated, already-validated stability-margin tests that have no release event and
+       should not inherit a delivery-specific mounting change.
+
+       Designed against the final corner-mounted sensor layout (validation/phase8/corner_mount/README.md): ramp LiDAR front-left at (0.39, 0.22, 0.176),
+       obstacle LiDAR rear-right at (-0.30, -0.22, 0.5). A left-side chute, offset aft of the ramp sensor's own x, clears both:
+         - ramp sensor: its rolled scan lies entirely in its own local XZ plane at y=0.22 (see lidar_joint's own comment - zero local-Y component for
+           any ray), so it only ever sees forward (+local-X) of its own mount. The chute's x-range (-0.475..0.175 before payload_cg_offset) sits
+           0.215 m behind the sensor's x=0.39 - entirely in its unused backward cone, regardless of the chute's Y-extent.
+         - obstacle sensor: 360 deg level ring at z=0.5 rel. base_link, 0.40 m laterally from the chute's inboard edge (y=0.18). Height clearance is
+           NOT just the plate's own surface height - the tilted PAYLOAD's own highest corner matters more (see the geometry history below, iteration
+           (4)'s self-occlusion finding) and is the actual binding constraint (0.45 m vs the sensor's 0.5 m, a real but checked 0.05 m margin). Narrower
+           margin than the first attempt (0.64 m laterally) because the whole chute moved closer to centreline for chassis-stability reasons - still
+           re-checked empirically, not just assumed safe because the number is smaller.
+       Both clearances are RE-CHECKED empirically (not just by this geometry argument) - validation/phase8/payload_chute/README.md's self-occlusion
+       re-run, matched before/after sampling exactly as corner-mount regression #1 was caught.
+
+       Geometry: a flat plate tilted -30 deg about local X (roll about X is the same rotation axis the ramp LiDAR's own 90 deg roll uses - it turns a
+       local Y run into a Y/Z slope), long axis along the tilt (local Y), short axis along the chassis (local X). tan(30 deg)=0.58 clears the payload's
+       own mu=0.3 friction (payload_box.sdf.xacro) with real margin (static slide threshold is only ~16.7 deg), so once the DetachableJoint releases,
+       gravity and friction alone carry the payload down and off the plate - no scripted external force (contrast with the superseded payload_unloader.py
+       script, which applied one; see validation/phase8/payload_chute/README.md for why a true incline is closer to "genuine physics" than that).
+
+       THREE geometry iterations were tried and rejected by direct measurement before this one, not assumed correct from the geometry alone - matched
+       before/after sampling exactly as corner-mount regression #1 was caught (validation/phase8/payload_chute/README.md has the full timeline):
+       (1) -25 deg, 0.6 m plate, payload rest y_local=-0.15: left the payload's own footprint (half-width 0.2 m) overhanging 0.05 m past the plate's
+           own inboard edge, unsupported - the spawned payload's actual quaternion showed it tipping to ~-50 deg, not the intended -25.
+       (2) -25 deg, 0.6 m plate, payload rest y_local=-0.07 (fully supported this time): spawned correctly at -25 deg, but high-frequency pose sampling
+           over the first ~2 s after spawn showed it sliding the full 0.17 m runway in well under a second and then STILL tipping to ~-50 deg and
+           sticking there - the runway was too short to build enough speed to clear the plate's own edge, so it see-sawed into a stuck partial-overhang
+           equilibrium instead of discharging.
+       (3) -30 deg, 0.7 m plate, payload rest centred near y=0.72 (rail clearance fixed too): STILL tipped, by almost exactly the same amount regardless
+           of plate length/angle/rail width - the real cause turned out to be nothing in the chute's own geometry at all. A combined pose+/payload/state
+           trace (validation/phase8/payload_chute/trace_robot_and_payload.py) showed the DetachableJoint attaching correctly ~3 s after spawn, well
+           BEFORE the apparent "tip" - and the ROBOT's own chassis roll matched the payload's roll to 5 decimal places at every sample. The payload was
+           never sliding relative to the chute at all: the whole robot was tipping over, because a 100 kg payload sitting ~0.65-0.72 m off centreline on
+           a 40 kg chassis with a 0.35 m half-track pushes the combined centre of gravity (100*y/(40+100)) past the wheel-track edge - a basic static-
+           stability violation, confirmed by the fact that a FLAT (zero-incline) chute showed the exact same tip. No chute surface geometry could have
+           fixed this; the secured payload simply cannot sit that far outboard for this mass ratio.
+       (4) -30 deg at the corrected y=0.28, z=0.33: robot stability confirmed fixed (level the whole way through a 15 s pose trace, including the exact
+           window Nav2's controller activates, which iteration (3) showed is also when the earlier tip became visible) - but the obstacle LiDAR's own
+           self-occlusion re-run (required the same way corner-mount regression #1 was required) found NEW short returns at bearings matching the
+           chute's own direction, range ~0.35-0.6 m. Root cause: checking only the PLATE's own surface height against the obstacle sensor's 0.5 m scan
+           plane missed that the PAYLOAD BOX ITSELF, tilted -30 deg, has its highest CORNER well above its own resting centre - for a 0.5x0.4x0.3 m box
+           tilted about its long (X) axis, that corner sits center_z + 0.2*|sin(tilt)| + 0.15*cos(tilt) above base_link, which at -30 deg reached ~0.56 m,
+           clean over the sensor's plane. A flatter tilt reduces this corner offset (it floors near the box's own half-height, 0.15 m, as tilt -> 0) while
+           still clearing the ~16.7 deg friction angle, so -20 deg was chosen as a real, re-verified compromise.
+       Final (this geometry, -20 deg): payload secured centre at y=0.28, z=0.24 (combined CG = 100*0.28/140 = 0.20, 57% of the 0.35 m critical track-edge
+       value - same stability margin as iteration (4), confirmed again by the full 6-leg rerun). Max payload corner z=0.45 m, a real 0.05 m margin below
+       the obstacle sensor's 0.5 m plane (validation/phase8/payload_chute/README.md has the live re-check that confirms this, not just the arithmetic).
+       The "visible side chute" character comes from the RELEASE trajectory, not the secured resting position - the old top-mount design's actual
+       problem (section above, "nothing pushes it off") is still solved, since the plate's own incline still carries the payload out and down once
+       released; it just starts closer to the body, and at a gentler angle, than originally envisioned, because the alternatives (further out, or
+       steeper) each reopened a different real failure (chassis tip-over; sensor self-occlusion).
+       Inboard edge (y=0.18, z=0.10 rel. base_link) sits 0.02 m BELOW the real chassis mesh's own highest point in this footprint (0.1283 m,
+       re-confirmed specifically for this chute's own x/y range, not assumed from the earlier corner-mount measurement) - accepted deliberately: the
+       chassis's actual COLLISION geometry is a plain box up to z=0.125 (not the detailed mesh), and robot links don't self-collide, so this is a small,
+       known COSMETIC visual overlap in one narrow spot, not a physics or sensor-safety issue (the mesh only matters for what a LiDAR ray-casts against,
+       and this plate sits well clear of both sensors - see above). The plate's X-range overlaps both wheels' own X-range, but its Z stays above wheel-
+       top height (~0 rel. base_link) everywhere the slide's Y is still within the wheel's own Y-span (0.31-0.39) - checked by direct calculation along
+       the slope, not assumed - so there is no wheel collision despite the X overlap. Outboard edge (y=0.646, z=-0.068 rel. base_link) is the discharge
+       point the Floor 2 dock is now built to receive (validation/phase8/floor2/generate_floor2.py's own updated DECK_H comment has the matching
+       derivation). Net slide acceleration g(sin20-0.3cos20)=0.59 m/s^2 over the 0.25 m runway (rest at y_local=-0.20 to the outboard edge at +0.25):
+       exit speed sqrt(2*0.59*0.25)=0.54 m/s, ~0.9 s to traverse - gentler than the rejected steeper iterations, but still a real, visible, un-scripted
+       slide, and the one that actually clears every constraint checked rather than just the ones checked first. -->
+  <xacro:property name="chute_roll" value="-0.3491"/>              <!-- -20 deg (see the 4th iteration note above: steeper angles pushed the payload's own tilted top
+       corner above the obstacle LiDAR's 0.5 m scan plane - a real self-occlusion finding caught by the required re-check, not the chute's SURFACE height
+       (already checked) but the PAYLOAD's own highest corner once tilted, which a flatter angle reduces along with the net slide acceleration). -->
+  <xacro:property name="chute_joint_x" value="-0.15"/>
+  <xacro:property name="chute_joint_y" value="0.4115"/>
+  <xacro:property name="chute_joint_z" value="0.0172"/>
+  <xacro:property name="chute_plate_len" value="0.5"/>             <!-- local Y, before tilt: inboard edge at -0.25, outboard at +0.25 -->
+  <!-- local X - the FIRST value tried (0.55) put the guide rails' own inner face (plate_width/2 - 0.015(rail half-width) - 0.015(rail offset)) at X=0.245,
+       INSIDE the payload's own half-width (0.25) by 5 mm - a real interference, not clearance, worth fixing on its own merits even though it later
+       turned out NOT to be the explanation for the big tipping bug (geometry history above) - a flat (zero-incline) test with this SAME interference
+       still bugged still tipped by the same amount the real (chassis-stability) cause would predict, which is how the rail theory got ruled out rather
+       than just reverted. 0.65 puts the rail inner face at 0.295 - 0.045 m of real clearance from the payload's own edge. -->
+  <xacro:property name="chute_plate_width" value="0.65"/>
+  <xacro:property name="chute_plate_thickness" value="0.03"/>
+  <xacro:if value="${separate_payload}">
+    <link name="payload_chute_link">
+      <visual>
+        <geometry><box size="${chute_plate_width} ${chute_plate_len} ${chute_plate_thickness}"/></geometry>
+        <material name="wheel_black"/>
+      </visual>
+      <collision>
+        <geometry><box size="${chute_plate_width} ${chute_plate_len} ${chute_plate_thickness}"/></geometry>
+      </collision>
+      <!-- Guide rails along the plate's long edges - keep the payload from sliding fore/aft off the sides, both while secured and during the slide. -->
+      <visual><origin xyz="${chute_plate_width/2 - 0.015} 0 0.04" rpy="0 0 0"/><geometry><box size="0.03 ${chute_plate_len} 0.08"/></geometry><material name="wheel_black"/></visual>
+      <visual><origin xyz="${-chute_plate_width/2 + 0.015} 0 0.04" rpy="0 0 0"/><geometry><box size="0.03 ${chute_plate_len} 0.08"/></geometry><material name="wheel_black"/></visual>
+      <collision><origin xyz="${chute_plate_width/2 - 0.015} 0 0.04" rpy="0 0 0"/><geometry><box size="0.03 ${chute_plate_len} 0.08"/></geometry></collision>
+      <collision><origin xyz="${-chute_plate_width/2 + 0.015} 0 0.04" rpy="0 0 0"/><geometry><box size="0.03 ${chute_plate_len} 0.08"/></geometry></collision>
+    </link>
+    <joint name="payload_chute_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="payload_chute_link"/>
+      <origin xyz="${chute_joint_x} ${chute_joint_y} ${chute_joint_z}" rpy="${chute_roll} 0 0"/>
+    </joint>
+  </xacro:if>
+
+  <!-- ===================== IMU: pitch/roll feed for stability margin (phase 6) ===================== -->
+  <link name="imu_link"/>
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ===================== 2D LiDAR: ramp/break-point perception feed (phase 4; corner-relocated phase 8) ===================== -->
+  <link name="lidar_link">
+    <!-- Drawn flush on the joint origin below: unlike the earlier visual-only fix, the joint itself is now set directly from the real measured
+         deck height (mir_corner_deck_z) plus a small mount standoff, so no separate visual offset is needed here. -->
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.05" length="0.06"/></geometry>
+      <material name="wheel_black"/>
+    </visual>
+  </link>
+  <!-- BUG FIX (phase 4 perception): rpy was "0 0 0" (level/horizontal scan
+       plane). A single-plane 2D LiDAR mounted level can NEVER produce ground
+       -return points on flat approach ground - every forward beam at mount
+       height (~0.295 m above the local floor) sails straight over flat
+       terrain and only ever hits something once it rises into the beam's
+       path, at which point you're seeing the rising face as a wall, not
+       "the ground ahead" as ramp_classifier_node.py's docstring assumes.
+       Rolling 90 deg about local X turns the sensor's native horizontal
+       (yaw) sweep into a VERTICAL fore-aft fan instead: after the roll,
+       angle=0 in the scan still points straight ahead (+X), negative
+       angles tip down toward the ground ahead, positive angles tip up.
+       That's what actually lets a single scan sample the ground profile
+       at a *range* of forward distances simultaneously (per ray: x = r*cos
+       (angle), height-relative-to-sensor = r*sin(angle) - literally the
+       same polar-to-Cartesian conversion any 2D LiDAR processing code
+       already does, just physically reinterpreted) - see
+       ramp_classifier_node.py for the line-fit that depends on this.
+
+       CORNER RELOCATION (phase 8): moved from dead-centre-forward (0, 0) to the front-left corner (y=0.22, chosen for clearance from the
+       front-left wheel - see validation/phase8/corner_mount/README.md for the full clearance arithmetic and FOV analysis). x stays at the same
+       forward offset as the original mount (base_length/2 - 0.05) - this was never a center-vs-corner question in the forward direction, so it's
+       unchanged on purpose. z is now set directly from the real measured deck height (mir_corner_deck_z) plus the same 0.05 m standoff the original
+       design used, rather than the old placeholder-box assumption. roll stays at 1.5708 rad (90 deg about local X) and yaw stays 0: the roll
+       converts the sensor's native 360 deg horizontal sweep into a ray set lying entirely in the sensor's own local XZ plane (forward/up-down,
+       zero local-Y component for every ray, by direct rotation-matrix computation - R_x(90deg) maps a native ray (cos th, sin th, 0) to
+       (cos th, 0, sin th)), so a lateral (Y) mount shift does not change which angles are swept, only translates that same vertical fan sideways;
+       this is the analytical basis for NOT changing roll/yaw for the corner move, verified (not just assumed) by the re-validation suite below,
+       since the ramp worlds in this project have no cross-slope.
+
+       x moved to 0.39 (closer to the front edge than the original 0.35) and z set from mir_ramp_corner_surface_z + 0.08 m, NOT the flat-deck height
+       - see mir_ramp_corner_surface_z's own comment above: this mount needed to land on the same sloped-edge surface band (and the same effective
+       standoff) the original centre mount sat on, to avoid self-occlusion off the broad flat deck a straight "same x, move y only" first attempt
+       hit. -->
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <origin xyz="0.39 0.22 ${mir_ramp_corner_surface_z + 0.08}" rpy="1.5708 0 0"/>
+  </joint>
+
+  <!-- ===================== 2nd 2D LiDAR: 360 deg obstacle ring (phase 8 sensor addition) =====================
+       Rolling lidar_link 90 deg (above) fixed ramp-slope detection but
+       cost the robot its horizontal obstacle ring - a single 2D LiDAR
+       physically cannot serve both roles at once (see
+       ramp_classifier_node.py's own docstring), which was a documented,
+       known gap (nothing beside/behind the robot was ever visible to
+       Nav2's local_costmap). Real fix, not a workaround: since this is
+       simulation, add a SECOND, independent LiDAR mounted normally
+       (level, rpy 0 0 0 - native horizontal yaw sweep, no roll) purely
+       for 360 deg obstacle detection, on its own topic (scan_360, see
+       the Gazebo sensor block below) so it never competes with or
+       changes ramp_classifier_node.py's own sensor (unchanged: still
+       lidar_link/scan). Mounted at z=obstacle_lidar_mount_z (base_link frame) specifically
+       to clear the payload_link box's own top (z=0.425 relative to
+       base_link, at its default 0.5x0.4x0.3 size - its COLLISION box is
+       present even when payload_mass=0.0, only its mass/inertia change
+       with that arg, not its collision geometry; its VISUAL is rendered
+       only when payload_mass > 0, see the payload link) - a level scan plane above the payload's top never
+       intersects it, so obstacle coverage stays full 360 deg regardless
+       of payload_mass/payload_cg_offset.
+
+       CORNER RELOCATION (phase 8): moved from dead-centre (0, 0) to the rear-right corner (x=-0.30, y=-0.22 - see
+       validation/phase8/corner_mount/README.md for the clearance arithmetic). x=-0.30 fully clears the payload box's own footprint in every
+       payload_cg_offset case used in this project regardless of y, since the payload's x-span never reaches that far aft; y=-0.22 clears the
+       rear-right wheel. z (obstacle_lidar_mount_z) is DELIBERATELY left unchanged at 0.5: the payload-top clearance requirement above is a function
+       of height alone, not lateral position, and does not relax just because the sensor moved to a corner - re-derived and confirmed below, not
+       assumed, since a naive "moved off the payload's column" read could easily have missed that the payload still occupies a wide angular arc of
+       this sensor's 360 deg ring from a corner vantage point. -->
+  <link name="obstacle_lidar_link">
+    <!-- Mounting mast (visual-only, no collision): spans from the real measured deck surface at this corner (mir_corner_deck_z) up to just under
+         the sensor's own body, so the required height has a real support instead of floating in mid-air. Shorter than the original mast
+         (deck here sits higher, 0.1283 m vs. the old centre-mount's 0.071 m) purely as a visual consequence of the flatter corner surface. -->
+    <visual>
+      <origin xyz="0 0 ${(mir_corner_deck_z - obstacle_lidar_mount_z - 0.025) / 2}" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.015" length="${obstacle_lidar_mount_z - mir_corner_deck_z - 0.025}"/></geometry>
+      <material name="wheel_black"/>
+    </visual>
+    <visual>
+      <geometry><cylinder radius="0.04" length="0.05"/></geometry>
+      <material name="wheel_black"/>
+    </visual>
+  </link>
+  <joint name="obstacle_lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="obstacle_lidar_link"/>
+    <origin xyz="-0.30 -0.22 ${obstacle_lidar_mount_z}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ===================== Wheels: 4x, each with its own joint for per-wheel slip estimation (phase 6) ===================== -->
+  <xacro:macro name="wheel" params="prefix x_off y_off">
+    <link name="${prefix}_wheel_link">
+      <inertial>
+        <mass value="2.0"/>
+        <inertia ixx="0.01" iyy="0.01" izz="0.015" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+      <!-- Real MiR100 wheel mesh, scaled per-axis to this robot's own wheel_radius/wheel_width - see the mir_wheel_* properties above.
+           No rotation: the mesh is already authored rolling about its own local y axis, same as this wheel joint's own axis below, unlike the plain
+           <cylinder> primitive (defaults to a z axis) that needed the 90 deg roll the collision geometry below still uses. -->
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry><mesh filename="$(find ramp_autonomy_description)/meshes/mir100/wheel.stl" scale="${wheel_radius/mir_wheel_r} ${wheel_width/mir_wheel_w} ${wheel_radius/mir_wheel_r}"/></geometry>
+        <material name="mir_dark_grey"/>
+      </visual>
+      <collision>
+        <origin rpy="1.5708 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+      </collision>
+    </link>
+    <joint name="${prefix}_wheel_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${prefix}_wheel_link"/>
+      <origin xyz="${x_off} ${y_off} ${wheel_z - base_height/2}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:wheel prefix="front_left"  x_off="${wheel_x_off}"  y_off="${wheel_y_off}"/>
+  <xacro:wheel prefix="front_right" x_off="${wheel_x_off}"  y_off="${-wheel_y_off}"/>
+  <xacro:wheel prefix="rear_left"   x_off="${-wheel_x_off}" y_off="${wheel_y_off}"/>
+  <xacro:wheel prefix="rear_right"  x_off="${-wheel_x_off}" y_off="${-wheel_y_off}"/>
+
+  <!-- ===================== Gazebo sensor + actuation plugins =====================
+       BUG FIX (phase 3 Nav2 wiring): none of this existed before. Without a
+       <sensor> block gz-sim never publishes /imu or /scan (state_machine_node,
+       stability_monitor_node, and ramp_classifier_node all subscribe to topics
+       that were simply never produced), and without a drive-actuation plugin
+       nothing in Gazebo ever consumes /cmd_vel, so the robot could not move at
+       all - Nav2's MPPI controller would compute commands into the void. -->
+
+  <gazebo reference="imu_link">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <topic>imu</topic>
+      <gz_frame_id>imu_link</gz_frame_id>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="lidar_link">
+    <sensor name="lidar_sensor" type="gpu_lidar">
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <topic>scan</topic>
+      <gz_frame_id>lidar_link</gz_frame_id>
+      <lidar>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.08</min>
+          <max>12.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </lidar>
+    </sensor>
+  </gazebo>
+
+  <!-- 360 deg obstacle-ring LiDAR (phase 8) - own topic (scan_360), own
+       link (obstacle_lidar_link, mounted level - see joint comment
+       above), completely independent of lidar_sensor/scan above. Same
+       360 deg horizontal sweep parameters as the ramp sensor (this one
+       just isn't rolled), so Nav2's ObstacleLayer gets a normal,
+       un-rotated LaserScan exactly like any standard Nav2 robot. -->
+  <gazebo reference="obstacle_lidar_link">
+    <sensor name="obstacle_lidar_sensor" type="gpu_lidar">
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <topic>scan_360</topic>
+      <gz_frame_id>obstacle_lidar_link</gz_frame_id>
+      <lidar>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.08</min>
+          <max>12.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </lidar>
+    </sensor>
+  </gazebo>
+
+  <!-- Skid-steer drive: pairs the two left wheels and the two right wheels.
+       wheel_separation = 2*wheel_y_off (0.70 m) matches track_width_m's
+       default in stability_monitor_node.py - keep those in sync if either
+       changes. Velocity/acceleration limits here are the physical actuator
+       ceiling, deliberately looser than any MPPI profile in
+       ramp_mppi_params.yaml (max 0.8 m/s / 1.2 rad/s) - the per-ramp-state
+       behavior limits belong in the planner, this is just a hardware guard. -->
+  <gazebo>
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+      <left_joint>front_left_wheel_joint</left_joint>
+      <left_joint>rear_left_wheel_joint</left_joint>
+      <right_joint>front_right_wheel_joint</right_joint>
+      <right_joint>rear_right_wheel_joint</right_joint>
+      <wheel_separation>${2 * wheel_y_off}</wheel_separation>
+      <wheel_radius>${wheel_radius}</wheel_radius>
+      <odom_topic>odom</odom_topic>
+      <tf_topic>tf</tf_topic>
+      <frame_id>odom</frame_id>
+      <child_frame_id>base_footprint</child_frame_id>
+      <odom_publish_frequency>50</odom_publish_frequency>
+      <max_linear_velocity>1.2</max_linear_velocity>
+      <min_linear_velocity>-0.6</min_linear_velocity>
+      <max_angular_velocity>1.8</max_angular_velocity>
+      <min_angular_velocity>-1.8</min_angular_velocity>
+      <max_linear_acceleration>2.0</max_linear_acceleration>
+      <min_linear_acceleration>-2.0</min_linear_acceleration>
+      <max_angular_acceleration>3.0</max_angular_acceleration>
+      <min_angular_acceleration>-3.0</min_angular_acceleration>
+    </plugin>
+  </gazebo>
+
+  <!-- ===================== Phase 6: per-wheel feedback for slip estimation =====================
+       Architecture decision: DiffDrive only exposes 2 commanded speeds
+       (left/right side), but it still actuates all 4 wheel joints
+       independently under the hood, and the physics engine simulates
+       each of those 4 joints' actual velocity separately (they CAN and
+       do differ under load/slip even though 2 of them share a commanded
+       value). gz-sim-joint-state-publisher-system is a read-only ground
+       -truth reporter, completely independent of whatever plugin is
+       doing the actuating - it doesn't care that DiffDrive (not
+       ros2_control) is driving these joints. That's the missing half of
+       "commanded vs actual per wheel": actual comes from here
+       (JointState.velocity, real physics), commanded is derived in
+       stability_monitor_node.py from the same /model/ramp_robot/cmd_vel
+       Twist DiffDrive itself consumes, run through the identical
+       differential-drive kinematics (wheel_radius/wheel_separation,
+       same values as the DiffDrive plugin above).
+
+       This is deliberately NOT a migration to ros2_control + 4
+       independent velocity interfaces + a controller_manager: that
+       would mean replacing a working, tested actuation plugin, adding a
+       new build/launch subsystem, and touching wheel commanding itself,
+       all just to get read-only telemetry that a second, orthogonal
+       plugin already provides for free. Migrate only if something
+       later needs independent PER-WHEEL torque/velocity COMMANDS
+       (true independent 4-wheel control) - slip ESTIMATION never did. -->
+  <gazebo>
+    <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+      <topic>joint_states</topic>
+      <joint_name>front_left_wheel_joint</joint_name>
+      <joint_name>front_right_wheel_joint</joint_name>
+      <joint_name>rear_left_wheel_joint</joint_name>
+      <joint_name>rear_right_wheel_joint</joint_name>
+    </plugin>
+  </gazebo>
+
+  <!-- ===================== Detachable payload (delivery session) =====================
+       gz-sim's DetachableJoint: a fixed joint between the chassis and the separately spawned payload model, created when both exist, removable by publishing
+       gz.msgs.Empty on /payload/detach (and re-attachable on /payload/attach). Declared only when detachable_payload:=true AND cargo_mode is NOT "loose" -
+       loose cargo was never secured in the first place, so it starts free with no joint to release (see the cargo_mode xacro:arg comment above); loose
+       takes precedence over detachable_payload if both are somehow passed together, rather than declaring a joint that would immediately contradict
+       "loose". The parent link is the chassis link of the converted SDF (base_footprint: base_link and the payload/sensor links are lumped into it by the
+       URDF->SDF fixed-joint reduction). -->
+  <xacro:if value="${detachable and not loose}">
+    <gazebo>
+      <plugin filename="gz-sim-detachable-joint-system" name="gz::sim::systems::DetachableJoint">
+        <parent_link>base_footprint</parent_link>
+        <child_model>payload_box</child_model>
+        <child_link>payload_link</child_link>
+        <detach_topic>/payload/detach</detach_topic>
+        <attach_topic>/payload/attach</attach_topic>
+        <output_topic>/payload/state</output_topic>
+        <suppress_child_warning>true</suppress_child_warning>
+      </plugin>
+    </gazebo>
+  </xacro:if>
+
+</robot>

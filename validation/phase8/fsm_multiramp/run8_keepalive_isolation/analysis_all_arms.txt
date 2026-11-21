@@ -1,0 +1,34 @@
+== arm n15a: legs [('L1', True), ('L2', True), ('L3', True)]  duration 309.58 s
+   HALT entries: 49 total, causes {'stall': 7, 'slip': 42}; slip-HALTs during TRANSITION/ASCENT climbs: 38
+   gaps between those slip-HALTs (s, rounded 0.1): most common [(3.2, 27), (6.2, 6), (0.2, 2), (71.4, 1), (6.8, 1)]   median 3.2
+   switcher pushes ("confirmed MPPI profile"): 205; gaps most common [(3.0, 94), (0.1, 83), (2.9, 8), (0.2, 3)]
+   MPPI "Optimizer reset" bursts: 116 (1447 resets); gaps most common [(3.0, 53), (3.2, 35), (2.9, 5), (3.4, 4)]
+   lag from the most recent optimizer-reset burst to each slip-HALT: n=38 median 0.10 s, p10 0.10, p90 0.11
+   actuation cmd_vel: min |vx| within 0.6 s after a reset burst: median 0.000 m/s (n=105); overall median |vx| 0.200
+== arm n30: legs [('L1', True), ('L2', True), ('L3', True)]  duration 292.76 s
+   HALT entries: 16 total, causes {'stall': 6, 'slip': 10}; slip-HALTs during TRANSITION/ASCENT climbs: 7
+   gaps between those slip-HALTs (s, rounded 0.1): most common [(6.2, 3), (12.2, 2), (9.4, 1)]   median 7.800000000000001
+   switcher pushes ("confirmed MPPI profile"): 82; gaps most common [(6.0, 39), (0.1, 17), (5.9, 5), (0.2, 3)]
+   MPPI "Optimizer reset" bursts: 62 (579 resets); gaps most common [(6.0, 29), (6.2, 6), (5.9, 4), (0.9, 3)]
+   lag from the most recent optimizer-reset burst to each slip-HALT: n=7 median 0.09 s, p10 0.09, p90 0.10
+   actuation cmd_vel: min |vx| within 0.6 s after a reset burst: median 0.086 m/s (n=55); overall median |vx| 0.200
+== arm n7: legs [('L1', True), ('L2', True), ('L3', True)]  duration 357.47 s
+   HALT entries: 102 total, causes {'stall': 7, 'slip': 95}; slip-HALTs during TRANSITION/ASCENT climbs: 89
+   gaps between those slip-HALTs (s, rounded 0.1): most common [(1.6, 52), (0.2, 33), (1.1, 1), (0.3, 1), (10.2, 1)]   median 1.6
+   switcher pushes ("confirmed MPPI profile"): 459; gaps most common [(1.4, 242), (0.1, 186), (1.3, 9), (0.2, 5)]
+   MPPI "Optimizer reset" bursts: 264 (3225 resets); gaps most common [(1.4, 185), (1.6, 38), (1.8, 16), (2.0, 4)]
+   lag from the most recent optimizer-reset burst to each slip-HALT: n=89 median 0.12 s, p10 0.11, p90 0.60
+   actuation cmd_vel: min |vx| within 0.6 s after a reset burst: median 0.095 m/s (n=241); overall median |vx| 0.200
+== arm off: legs [('L1', True), ('L2', True), ('L3', True)]  duration 288.35 s
+   HALT entries: 9 total, causes {'stall': 5, 'slip': 4}; slip-HALTs during TRANSITION/ASCENT climbs: 0
+   gaps between those slip-HALTs (s, rounded 0.1): most common []   median None
+   switcher pushes ("confirmed MPPI profile"): 23; gaps most common [(0.1, 6), (10.1, 2), (63.0, 1), (23.1, 1)]
+   MPPI "Optimizer reset" bursts: 18 (166 resets); gaps most common [(5.2, 2), (10.1, 2), (63.0, 1), (18.5, 1)]
+   actuation cmd_vel: min |vx| within 0.6 s after a reset burst: median 0.000 m/s (n=16); overall median |vx| 0.200
+== arm n15b: legs [('L1', True), ('L2', True), ('L3', True)]  duration 290.12 s
+   HALT entries: 14 total, causes {'stall': 7, 'slip': 7}; slip-HALTs during TRANSITION/ASCENT climbs: 6
+   gaps between those slip-HALTs (s, rounded 0.1): most common [(12.0, 2), (9.0, 2), (126.8, 1)]   median 12.0
+   switcher pushes ("confirmed MPPI profile"): 130; gaps most common [(3.0, 82), (2.9, 13), (0.1, 11), (0.0, 4)]
+   MPPI "Optimizer reset" bursts: 111 (915 resets); gaps most common [(3.0, 86), (2.9, 4), (2.7, 2), (2.6, 2)]
+   lag from the most recent optimizer-reset burst to each slip-HALT: n=6 median 0.04 s, p10 0.04, p90 0.04
+   actuation cmd_vel: min |vx| within 0.6 s after a reset burst: median 0.100 m/s (n=101); overall median |vx| 0.200

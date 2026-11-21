@@ -1,0 +1,20 @@
+BASELINES
+  original 0/6                       n= 6 GT fail  0/6  =   0% (Wilson 0-39%)  max|y| mean 0.90 sd 0.26 median 0.98 range 0.39-1.11
+  fixed 10/10                        n=10 GT fail 10/10 = 100% (Wilson 72-100%)  max|y| mean 2.49 sd 0.63 median 2.41 range 1.74-3.85
+  scoped 5/14                        n=14 GT fail  5/14 =  36% (Wilson 16-61%)  max|y| mean 1.32 sd 0.72 median 1.03 range 0.38-2.54
+
+=== ARM: Arm P closed-loop turn on flat platform ===
+  run                                      GT max|y|   verdict HALTs stall/slip  leg m   n       final gz (x, y, z) min RTF
+  curved_unloaded_normal_armP_r1                0.02  MARGINAL     4       4/15   2.56  21 (  4.20, -0.01, 0.23)   0.995
+  curved_unloaded_normal_armP_r2                0.02  MARGINAL     5       4/17   2.60  21 (  4.19,  0.02, 0.23)   0.994  <0.995
+  curved_unloaded_normal_armP_r3                0.02  MARGINAL     6       4/15   2.62  20 (  4.25,  0.02, 0.24)   0.996
+  curved_unloaded_normal_armP_r4                0.03  MARGINAL     6       3/19   2.64  21 (  4.36, -0.03, 0.23)   0.995
+  curved_unloaded_normal_armP_r5                0.04  MARGINAL     5       3/18   2.62  21 (  4.37,  0.02, 0.23)   0.994  <0.995
+  curved_unloaded_normal_armP_r6                0.04      FAIL     9       5/21   2.65  22 (  4.15,  0.05, 0.23)   0.990  <0.995
+  Arm P closed-loop turn on flat platform (all) n= 6 GT fail  0/6  =   0% (Wilson 0-39%)  max|y| mean 0.03 sd 0.01 median 0.03 range 0.02-0.04
+  Arm P closed-loop turn on flat platform (RTF>=0.995) n= 3 GT fail  0/3  =   0% (Wilson 0-56%)  max|y| mean 0.02 sd 0.01 median 0.02 range 0.02-0.03
+    vs original 0/6  : failure-rate diff   +0 pts (Newcombe 95% CI -39..+39); Fisher p=1.0000; mean max|y| diff -0.87 m (boot CI -1.01..-0.66); rank p=0.0022
+    vs fixed 10/10   : failure-rate diff -100 pts (Newcombe 95% CI -100..-52); Fisher p=0.0001; mean max|y| diff -2.46 m (boot CI -2.86..-2.13); rank p=0.0002
+    vs scoped 5/14   : failure-rate diff  -36 pts (Newcombe 95% CI -61..+8); Fisher p=0.2604; mean max|y| diff -1.29 m (boot CI -1.67..-0.95); rank p=0.0001
+  HALTs: median 6 mean 5.8 range 4-9; HALT_THRASH(>=8) 1/6
+  descent progress: odom leg distance median 2.62 m (of a 6 m path); runs with leg >= 2.5 m (E2): 6/6

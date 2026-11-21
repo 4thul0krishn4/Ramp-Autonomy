@@ -1,0 +1,31 @@
+Ground truth vs EKF at the moment the descent goal is sent (recorded runs; passive recorder, unmodified test)
+run                                      yaw gt yaw ekf   gt y  ekf y  y err gt max|y|  leg m
+diag_base04_r1                               94      94   0.40   0.00  +0.40      2.41   0.36
+diag_base04_r2                               86      86   0.21   0.00  +0.21      0.94   0.46
+diag_base04_r3                               88      88   0.19   0.00  +0.19      0.96   0.43
+diag_dense005_r1                             85      85   0.15   0.00  +0.15      0.16   0.11
+diag_dense005_r2                            101     101   0.43   0.00  +0.43      0.50   0.08
+diag_mu045_r1                                 0       0  -0.01   0.00  -0.01      0.26   3.62
+curved_unloaded_normal_armH_r1              176     176   1.01   0.00  +1.01      1.16   5.67
+curved_unloaded_normal_armH_r2              176     176   1.29   0.00  +1.29      2.19   0.34
+curved_unloaded_normal_armH_r3              176     176   1.25   0.00  +1.25      2.31   1.17
+curved_unloaded_normal_armH_r4              176     176   1.26   0.00  +1.26      2.24   1.00
+curved_unloaded_normal_armH_r5              176     176   1.26   0.00  +1.26      2.26   0.70
+curved_unloaded_normal_armH_r6             -176    -176  -1.27   0.00  -1.27      2.22   0.11
+curved_unloaded_normal_armB_r10              88      88   0.23   0.00  +0.23      0.35   0.04
+curved_unloaded_normal_armB_r11              91      91   0.23   0.00  +0.23      0.29   0.05
+curved_unloaded_normal_armB_r12              92      92   0.13   0.00  +0.13      0.29   0.03
+curved_unloaded_normal_armB_r1               85      85   0.18   0.00  +0.18      0.30   0.06
+curved_unloaded_normal_armB_r2               93      93   0.46   0.00  +0.46      1.35   0.13
+curved_unloaded_normal_armB_r3               83      83   0.25   0.00  +0.25      0.56   0.01
+curved_unloaded_normal_armB_r4               88      88   0.20   0.00  +0.20      0.34   0.04
+curved_unloaded_normal_armB_r5               87      87   0.19   0.00  +0.19      0.32   0.06
+curved_unloaded_normal_armB_r6               84      84   0.15   0.00  +0.15      0.34   0.03
+curved_unloaded_normal_armB_r7               83      83   0.23   0.00  +0.23      0.30   0.05
+curved_unloaded_normal_armB_r8               85      85   0.22   0.00  +0.22      0.26   0.05
+curved_unloaded_normal_armB_r9               91      91   0.19   0.00  +0.19      0.24   0.06
+  open-loop turn, 0.4 m path                       n= 3  yaw at goal     89 deg (range 86..94);  true y offset the EKF cannot see: mean +0.27 m (range +0.19..+0.40)
+  open-loop turn, 0.05 m path                      n= 2  yaw at goal     93 deg (range 85..101);  true y offset the EKF cannot see: mean +0.29 m (range +0.15..+0.43)
+  open-loop turn, 0.05 m + cross-track critic      n=12  yaw at goal     88 deg (range 83..93);  true y offset the EKF cannot see: mean +0.22 m (range +0.13..+0.46)
+  CLOSED-loop turn to 180 deg, 0.4 m path          n= 6  yaw at goal    117 deg (range -176..176);  true y offset the EKF cannot see: mean +0.80 m (range -1.27..+1.29)
+  mu 0.45 world, open-loop turn                    n= 1  yaw at goal      0 deg (range 0..0);  true y offset the EKF cannot see: mean -0.01 m (range -0.01..-0.01)

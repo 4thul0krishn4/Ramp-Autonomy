@@ -1,0 +1,19 @@
+== Floor 1 (existing, unmodified) -> ramp 2 -> Floor 2, along the robot centreline (y = 0) ==
+ok    Floor 1 east edge -> ramp 2 bottom (same relation as laydown -> ramp 1) x gap -0.0046 m   z step -0.0002 m
+ok       reference: laydown -> ramp 1 bottom (already validated) x gap -0.0046 m   z step -0.0002 m
+ok    ramp2_fillet_bottom_1 -> ramp2_fillet_bottom_2             x gap -0.0046 m   z step -0.0007 m
+ok    ramp2_fillet_bottom_2 -> ramp2_fillet_bottom_3             x gap -0.0045 m   z step -0.0011 m
+ok    ramp2_fillet_bottom_3 -> ramp2_mid                         x gap +0.0001 m   z step -0.0002 m
+ok    ramp2_mid -> ramp2_fillet_top_1                            x gap +0.0046 m   z step +0.0008 m
+ok    ramp2_fillet_top_1 -> ramp2_fillet_top_2                   x gap +0.0046 m   z step +0.0006 m
+ok    ramp2_fillet_top_2 -> ramp2_fillet_top_3                   x gap +0.0046 m   z step +0.0002 m
+ok    ramp 2 top -> Floor 2 (lane slab)                          x gap -0.0002 m   z step +0.0000 m
+ok    Floor 1 (elevated_level) -> Floor-1 extension slab (flush) x gap +0.0000 m   z step +0.0000 m
+== Floor 2 slab boxes (equal top heights, edges coincide) ==
+      floor2_slab_main     top z = 6.5500 (x 68.940 -> 86.940, y -3.40 .. 8.00)
+      floor2_slab_sw       top z = 6.5500 (x 68.940 -> 79.000, y -8.00 .. -3.40)
+      floor2_slab_se       top z = 6.5500 (x 83.000 -> 86.940, y -8.00 .. -3.40)
+      floor2_slab_s        top z = 6.5500 (x 79.000 -> 83.000, y -8.00 .. -7.40)
+      all four Floor-2 boxes share one top height: [6.55]   (floor-to-floor rise = 6.55 - 3.35 = 3.200 m)
+
+RESULT: ALL SEAMS PASS (<= 2 mm step, <= 6 mm crack; ramp-2 chain identical to ramp 1)

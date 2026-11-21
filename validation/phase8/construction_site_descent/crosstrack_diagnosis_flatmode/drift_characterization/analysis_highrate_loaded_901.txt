@@ -1,0 +1,93 @@
+leg3 window: 209.1s  (trial 901, leg3_ok=True, halts=15)
+HALT episodes: whole trial 33, leg 3 15
+
+== HALT time budget in leg 3 ==
+  slip  :   4 episodes, total    0.4s ( 0.2% of leg 3), median  0.10s  min  0.10  max  0.10
+  stall :  11 episodes, total  100.7s (48.2% of leg 3), median 10.00s  min  0.48  max 10.10
+  ALL   :  15 episodes, total  101.1s (48.4% of leg 3 spent in HALT)
+
+== slip-triggered HALT entries: 4 ==
+  slip in [0.5, 0.9): 0
+  slip in [0.9, 1.1): 1
+  slip in [1.1, 3): 1
+  slip in [3, inf): 2
+command-resume events (cmd from ~0 for >=0.3s to nonzero), whole trial: 20
+
+recomputed-vs-published slip at entry (formula check): median |diff| = 4.140  (n=4)
+what the worst wheel looks like at slip-HALT entry:
+    4  B: tiny commanded wheel rate (small denominator)
+time since last command resume (s): median 3.30, <=1.5s: 1/4, <=3s: 1
+real chassis speed at slip-HALT entry: median |vx| = 0.032 m/s (median commanded |vx| = 0.043)
+|commanded| min wheel rate at entry (rad/s): median 0.16
+
+wheel lag after command resume (time to reach 63% of commanded wheel rate), n=11: median 0.20s  p90 0.26s  never-reached 0
+
+== 11 stall-latched HALTs in leg 3: what happened in the 6s before each ==
+  slip HALT entries in the 6s before: median 0, episodes preceded by >=1: 1/11
+  real displacement over the 5s before the latch: median 1.198 m (detector threshold on mean scan change: 0.05 m); <0.15 m in 0/11
+  fraction of those 5s with a nonzero actuation command: median 1.00
+
+== telemetry excerpt: leg-3 t+40s .. t+70s, 0.5 s resolution ==
+  t_rel  state   act_vx  act_wz  wheelL  wheelR  slip   stalled  odom_vx
+   40.0  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   40.5  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   41.0  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   41.5  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   42.0  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   42.5  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   43.0  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   43.5  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   44.0  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   44.5  EXIT      0.06   0.03    0.17    0.32   0.00     0    0.023
+   45.0  EXIT      0.21   0.13    1.41    2.14   0.00     0    0.211
+   45.5  EXIT      0.36   0.12    2.47    3.15   0.05     0    0.337
+   46.0  EXIT      0.39   0.13    2.90    3.67   0.00     0    0.394
+   46.5  EXIT      0.41   0.11    3.06    3.77   0.00     0    0.411
+   47.0  EXIT      0.45   0.16    3.43    4.26   0.00     0    0.463
+   47.5  EXIT      0.34   0.16    1.99    2.88   0.00     0    0.315
+   48.0  EXIT      0.37   0.17    2.60    3.57   0.00     0    0.370
+   48.5  EXIT      0.37   0.20    2.55    3.73   0.00     0    0.377
+   49.0  EXIT      0.31   0.17    2.09    3.11   0.00     0    0.312
+   49.5  EXIT      0.35   0.18    2.21    3.26   0.00     0    0.328
+   50.0  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.002
+   50.5  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   51.0  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   51.5  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.001
+   52.0  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   52.5  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   53.0  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   53.5  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   54.0  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   54.5  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   55.0  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   55.5  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   56.0  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   56.5  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   57.0  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   57.5  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   58.0  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   58.5  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   59.0  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   59.5  HALT      0.00   0.00    0.00   -0.00   0.00     1   -0.000
+   60.0  EXIT      0.13   0.12    0.76    1.47   0.00     0    0.133
+   60.5  EXIT      0.20   0.19    1.11    2.27   0.00     0    0.204
+   61.0  EXIT      0.19   0.16    1.08    2.06   0.00     0    0.188
+   61.5  EXIT      0.18   0.15    1.09    2.01   0.00     0    0.186
+   62.0  EXIT      0.20   0.15    1.25    2.15   0.00     0    0.204
+   62.5  EXIT      0.22   0.20    1.35    2.50   0.00     0    0.231
+   63.0  EXIT      0.23   0.17    1.40    2.39   0.00     0    0.228
+   63.5  EXIT      0.22   0.21    1.28    2.51   0.00     0    0.227
+   64.0  EXIT      0.25   0.24    1.38    2.71   0.00     0    0.245
+   64.5  EXIT      0.25   0.22    1.45    2.79   0.00     0    0.255
+   65.0  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.001
+   65.5  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.001
+   66.0  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   66.5  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.001
+   67.0  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   67.5  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   68.0  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   68.5  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   69.0  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+   69.5  HALT      0.00   0.00    0.00    0.00   0.00     1   -0.000
+
+leg 3 real chassis motion: fraction of odom samples with |vx|>0.05 m/s = 0.51; state==HALT fraction = 0.48

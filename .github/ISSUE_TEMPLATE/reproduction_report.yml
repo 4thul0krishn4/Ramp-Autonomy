@@ -1,0 +1,41 @@
+name: Reproduction report
+description: You re-ran a published result and want to report what you got
+labels: [reproduction]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Independent reproduction is one of the most useful things you can contribute here —
+        and a result that *contradicts* a published number is more useful than one that matches.
+  - type: input
+    id: which-result
+    attributes:
+      label: Which published result
+      description: Which cell, run or table in docs/results.md.
+    validations:
+      required: true
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: Outcome
+      options:
+        - Matched the published result
+        - Contradicted the published result
+        - Partially matched
+    validations:
+      required: true
+  - type: textarea
+    id: numbers
+    attributes:
+      label: What you got
+      description: Your numbers next to the published ones, and the command you ran.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: host
+    attributes:
+      label: Host and real-time factor
+      description: |
+        The harness is sensitive to real-time factor — `harness_guard.py` checks it for a reason.
+        Please include what RTF your host sustained.

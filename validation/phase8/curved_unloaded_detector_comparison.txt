@@ -1,0 +1,31 @@
+
+FIXED detector (n=6)
+   #  GT max|y| m                                 GT verdict  overall  HALTs  stall/slip/margin  min RTF
+   1         2.48   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL     14             3/42/1    0.998
+   2         1.74   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL      6             2/34/2    0.997
+   3         2.00   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL     16             7/46/1    0.995
+   4         2.00   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL      9             7/35/0    0.997
+   5         2.92   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL     13             3/29/2    0.998
+   6         2.33   FAIL: GROUND_TRUTH_EDGE_DEPARTURE (max |     FAIL     16             5/43/0    0.998
+
+ORIGINAL detector, controlled runs (n=6)
+   #  GT max|y| m                                 GT verdict  overall  HALTs  stall/slip/margin  min RTF
+   1         0.97        PASS (max |y|=0.97 m, n=29 samples) MARGINAL      6             3/13/0    0.996
+   2         0.98        PASS (max |y|=0.98 m, n=30 samples)     FAIL     16             4/25/0    0.999
+   3         0.39        PASS (max |y|=0.39 m, n=16 samples) MARGINAL      6             2/13/0    0.999
+   4         1.01        PASS (max |y|=1.01 m, n=30 samples)     FAIL     12             3/21/0    0.998
+   5         0.94        PASS (max |y|=0.94 m, n=29 samples) MARGINAL      5             3/14/0    0.997
+   6         1.11        PASS (max |y|=1.11 m, n=27 samples)     FAIL      8             4/20/0    0.997
+
+================ comparison ================
+  fixed    : ground-truth FAIL 6/6  (Wilson 95% 61-100%)
+  original : ground-truth FAIL 0/6  (Wilson 95% 0-39%)
+  exact Fisher, failure counts, two-sided: p = 0.002
+  departure magnitude (max |y|): fixed mean 2.25 sd 0.42 range 1.74-2.92 | original mean 0.90 sd 0.26 range 0.39-1.11
+  mean difference (original - fixed) = -1.35 m, bootstrap 95% CI [-1.73, -1.00]; exact permutation p = 0.002
+  total HALTs               : original mean   8.8 (range 5-16) | fixed mean  12.3 (range 6-16) | perm p = 0.182
+  stall-latch HALT entries  : original mean   3.2 (range 2-4) | fixed mean   4.5 (range 2-7) | perm p = 0.258
+  slip HALT entries         : original mean  17.7 (range 13-25) | fixed mean  38.2 (range 29-46) | perm p = 0.002
+  supplementary, not in the test: earlier old-detector runs 2.68 m (pre-guard host) and 1.01 m (clean)
+  pooled old-detector (controlled + earlier two): fail 1/8, mean 1.14 m
+  power note: with n=6 vs n=6, at p<0.05 only differences on the order of 6/6 vs <= 1/6 failing (or a several-tenths-of-a-metre mean shift) are detectable

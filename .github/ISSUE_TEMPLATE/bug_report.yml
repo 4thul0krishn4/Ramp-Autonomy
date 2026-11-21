@@ -1,0 +1,58 @@
+name: Bug report
+description: Something in the stack behaves incorrectly
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. The most useful bug reports here include the exact launch command and
+        what ground truth said, not just what the FSM reported about itself.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you expected, and what the robot actually did.
+    validations:
+      required: true
+  - type: textarea
+    id: launch-command
+    attributes:
+      label: Launch command
+      description: The full command, including world, payload mass and CG offset.
+      render: shell
+      placeholder: ros2 launch ramp_autonomy_bringup ramp_autonomy_bringup.launch.py world:=construction_site payload_mass:=100.0
+    validations:
+      required: true
+  - type: dropdown
+    id: world
+    attributes:
+      label: World
+      options: [sharp, curved, construction_site, other / custom]
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What the topics showed
+      description: |
+        Anything you captured from `/ramp_state`, `/stability_margin`, `/wheel_slip`, or the Gazebo
+        ground-truth pose. If the FSM and ground truth disagreed, that disagreement is the interesting part.
+      render: shell
+  - type: input
+    id: ros-version
+    attributes:
+      label: ROS 2 distro and Gazebo version
+      placeholder: ROS 2 Jazzy, gz-sim 8.7.0
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: OS and GPU
+      placeholder: Ubuntu 24.04, NVIDIA RTX 3060
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please paste text rather than attaching multi-GB rosbags.
+      render: shell
