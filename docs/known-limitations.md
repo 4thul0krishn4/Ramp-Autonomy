@@ -17,6 +17,24 @@ round" status as of 2026-09-20, plus later items opened since.
 - **Real-time factor headroom is thin on the full autonomous stack**, roughly 7% (mean 0.93 whole-stack; a heavy measurement probe alone costs
   about 0.05 of it). The clean-host guard's low-real-time-factor threshold is configurable (`HG_LOW_RTF`) specifically because this margin is
   thinner than the guard's original calibration assumed.
+- **The clean-host guard now refuses guarded trials on the construction-site world on commodity hardware.** `harness_guard.py`'s `MIN_RTF` is a
+  hard gate of 0.95, checked before every guarded trial, and the Floor-2 construction site no longer clears it. Measured on a 12-core laptop
+  with an RTX 3050: roughly **0.90-0.92 headless**, and roughly **0.70 with the Gazebo GUI running**, so a guarded trial on that world aborts
+  immediately with `HARNESS GUARD FAILED - DO NOT RUN THE TRIAL`. Three things follow, and all three matter to anyone trying to reproduce
+  `results.md`:
+  - `HG_LOW_RTF` does **not** help. It relaxes only the health monitor's "two samples below this" clause during a run; `MIN_RTF` is a separate
+    module constant with no environment override, so the pre-trial check fails before the monitor is ever reached.
+  - This is a property of the world, not of the host being busy. `harness_guard.py`'s own comment records the Floor-2 world at a steady ~0.91 on
+    an idle host with a load average of ~6, against ~0.98 for the Floor-1-only world the 0.95 figure was calibrated on. Shrinking the GUI window
+    changes nothing measurably - the cost is physics and dual-LiDAR raycasting, not render resolution.
+  - **No filmed run of this world can be validation-grade on hardware of this class.** The recorded round trips in `recordings/` sustained 0.94
+    because they were captured on 2026-09-20, before the Floor-2 extension existed; the same capture on the current world costs substantially
+    more. This is a sharper version of the caveat `recordings/README.md` already makes.
+
+  Not fixed, and deliberately not papered over by lowering `MIN_RTF`: the gate is doing exactly what it was built to do, which is refuse to
+  produce a number the project would then have to defend. The real fix is either a cheaper world (fewer collision shapes, cheaper LiDAR
+  raycasting) or an explicit, recorded decision to recalibrate the threshold for the Floor-2 world. Neither has been done. If you hit this,
+  please open an issue with the real-time factor your machine sustains - how widespread it is across hardware is not yet known.
 
 ## Standing scope boundaries
 

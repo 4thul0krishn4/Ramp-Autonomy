@@ -455,6 +455,11 @@ logs, recordings). All of it regenerates by re-running these scripts.
 **A reproduction that contradicts a published number here is more valuable than one that confirms it.** There is an issue template for exactly
 that.
 
+> [!WARNING]
+> The guard enforces a hard real-time-factor floor of 0.95, and the construction-site world no longer clears it on ordinary hardware (~0.90-0.92
+> headless, ~0.70 with the GUI up). A guarded trial there may refuse to start. That is the guard working as designed, not a broken checkout -
+> see [`known-limitations.md`](docs/known-limitations.md). Please open an issue with the real-time factor your machine sustains.
+
 </details>
 
 ---

@@ -68,6 +68,21 @@ cd validation/phase8/construction_site_descent
 python3 arc_turn_followpath_test_ekf.py <out.csv>
 ```
 
+### If the guard refuses to start
+
+`harness_guard.py` enforces a hard real-time-factor floor of 0.95 before any guarded trial. The construction-site world no longer clears that
+on ordinary hardware - roughly 0.90-0.92 headless and 0.70 with the Gazebo GUI up on a 12-core laptop with an RTX 3050 - so a run there can
+abort immediately with:
+
+```
+!! HARNESS GUARD FAILED - DO NOT RUN THE TRIAL
+!! real-time factor 0.91 < 0.95 (simulator cannot keep real time)
+```
+
+That is the guard working, not a broken checkout. `HG_LOW_RTF` will not get you past it (it relaxes a different, in-run check). Running
+`headless:=true` helps but is unlikely to be enough on its own. See `known-limitations.md` for the full picture - and if you hit this, please
+open an issue saying what real-time factor your machine sustains, because how widespread this is across hardware is not yet known.
+
 ### A note on the recorded data
 
 This repository tracks the harness, the analysis code and the written-up results, but not the several GB of raw per-run output the suite
