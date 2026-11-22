@@ -299,6 +299,21 @@
       <geometry><cylinder radius="0.05" length="0.06"/></geometry>
       <material name="wheel_black"/>
     </visual>
+    <!-- Mount pedestal (visual-only, no collision): lidar_joint deliberately holds the sensor 0.08 m above the measured corner surface
+         (mir_ramp_corner_surface_z) so its ray-casting frame keeps the geometry phase 4's accuracy table was validated against. Nothing was
+         modelled across that standoff, so the sensor body rendered as a block hovering ~0.03 m over the deck. This fills the gap between the
+         real surface and the sensor's own underside. The joint origin, the sensor frame and every collision/inertial block are untouched -
+         this is a rendering fix only, exactly like the chassis mesh swap in results.md.
+         Frame note: lidar_joint rolls this link +90 deg about X, so the link's +Y axis is world +Z. The pedestal is therefore offset along
+         local -Y to travel DOWN in the world, and rolled -90 deg about X so its own cylinder axis stands vertically. -->
+    <xacro:property name="ramp_lidar_standoff" value="0.08"/>   <!-- lidar_joint's z above mir_ramp_corner_surface_z -->
+    <xacro:property name="ramp_lidar_radius"   value="0.05"/>   <!-- sensor body radius, i.e. how far down its underside reaches -->
+    <xacro:property name="ramp_lidar_gap"      value="${ramp_lidar_standoff - ramp_lidar_radius}"/>
+    <visual>
+      <origin xyz="0 ${-(ramp_lidar_radius + ramp_lidar_gap / 2)} 0" rpy="-1.5708 0 0"/>
+      <geometry><cylinder radius="0.035" length="${ramp_lidar_gap}"/></geometry>
+      <material name="wheel_black"/>
+    </visual>
   </link>
   <!-- BUG FIX (phase 4 perception): rpy was "0 0 0" (level/horizontal scan
        plane). A single-plane 2D LiDAR mounted level can NEVER produce ground
@@ -373,7 +388,7 @@
          (deck here sits higher, 0.1283 m vs. the old centre-mount's 0.071 m) purely as a visual consequence of the flatter corner surface. -->
     <visual>
       <origin xyz="0 0 ${(mir_corner_deck_z - obstacle_lidar_mount_z - 0.025) / 2}" rpy="0 0 0"/>
-      <geometry><cylinder radius="0.015" length="${obstacle_lidar_mount_z - mir_corner_deck_z - 0.025}"/></geometry>
+      <geometry><cylinder radius="0.03" length="${obstacle_lidar_mount_z - mir_corner_deck_z - 0.025}"/></geometry>
       <material name="wheel_black"/>
     </visual>
     <visual>
