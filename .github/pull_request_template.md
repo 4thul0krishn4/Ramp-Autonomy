@@ -9,13 +9,19 @@
 ## How it was verified
 
 <!--
-This is the section that matters most in this project. FSM state reporting its own success is not
-verification — see docs/retrospective.md for two cases where it was actively misleading.
+For anything that changes behaviour, this is the section that matters most in this project. FSM state
+reporting its own success is not verification - see docs/retrospective.md for two cases where it was
+actively misleading. Say what you actually checked: which run, against what ground truth, and what the
+numbers were.
 
-Please say what you actually checked: which run, against what ground truth, and what the numbers were.
+For docs, metadata, tooling or CI, just say how you checked it does what it should - "rendered it and
+clicked the links", "ran the validator", "launched it and the config loaded" are all fine answers.
 -->
 
 ## Checklist
+
+<!-- Tick what applies. Several of these are about simulation behaviour and will not apply to a docs,
+     metadata, tooling or CI change - leave those unticked and say so, it is not a failed review. -->
 
 - [ ] `colcon build --symlink-install` completes with no new warnings from the packages I touched
 - [ ] I verified behaviour against Gazebo ground truth, not FSM state alone, and said how above

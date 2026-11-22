@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Independent reproduction is one of the most useful things you can contribute here —
+        Independent reproduction is one of the most useful things you can contribute here -
         and a result that *contradicts* a published number is more useful than one that matches.
   - type: input
     id: which-result
@@ -37,5 +37,5 @@ body:
     attributes:
       label: Host and real-time factor
       description: |
-        The harness is sensitive to real-time factor — `harness_guard.py` checks it for a reason.
+        The harness is sensitive to real-time factor - `harness_guard.py` checks it for a reason.
         Please include what RTF your host sustained.
