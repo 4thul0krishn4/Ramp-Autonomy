@@ -4,11 +4,11 @@
 
 ### Ramp ascent and descent for a *loaded* wheeled AMR — the part flat-floor navigation quietly gets wrong
 
-[![ROS 2](https://img.shields.io/badge/ROS%202-Jazzy-22314E?style=for-the-badge&logo=ros&logoColor=white)](https://docs.ros.org/en/jazzy/)
-[![Gazebo](https://img.shields.io/badge/Gazebo-Harmonic%20(gz--sim%208)-FB7A18?style=for-the-badge)](https://gazebosim.org/)
-[![Nav2](https://img.shields.io/badge/Nav2-MPPI-2E7D32?style=for-the-badge)](https://docs.nav2.org/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-0A7BBB?style=for-the-badge)](LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-7B1FA2?style=for-the-badge)](CONTRIBUTING.md)
+[![ROS 2](https://img.shields.io/badge/ROS_2-Jazzy-blue?style=for-the-badge&logo=ros&logoColor=white)](https://docs.ros.org/en/jazzy/)
+[![Gazebo](https://img.shields.io/badge/Gazebo-Harmonic-orange?style=for-the-badge)](https://gazebosim.org/)
+[![Nav2](https://img.shields.io/badge/Nav2-MPPI-green?style=for-the-badge)](https://docs.nav2.org/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-lightgrey?style=for-the-badge)](LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-blueviolet?style=for-the-badge)](CONTRIBUTING.md)
 
 <img src="docs/images/hero/ramp_climb.png" alt="A loaded AMR climbing the construction-site ramp in Gazebo, payload visible on the chassis" width="88%">
 
@@ -515,7 +515,7 @@ Honest status — none of these are started. Details and reasoning in [`docs/roa
 Contributions are welcome — bug reports, independent reproduction, new ramp geometries or payload configurations, and work on anything in
 [`known-limitations.md`](docs/known-limitations.md).
 
-**New here?** The [good first issues](../../issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) are real work, not busywork — and two
+**New here?** The [good first issues](../../contribute) are real work, not busywork — and two
 of them need no simulator at all. The highest-value ten minutes you can spend is
 [reporting the real-time factor your machine sustains](../../issues/1): the harness enforces a floor this world may no longer clear, and how
 widespread that is across hardware is genuinely unknown.

@@ -10,8 +10,8 @@ on `construction_site.sdf`, one full round trip: gate -> laydown -> up the ramp 
 
 | | video | data | result |
 |---|---|---|---|
-| **Loaded** (100 kg, +0.1 m CG) | `round_trip_loaded/round_trip_loaded.mp4` (6.6 min, 1280x720, 20 fps, 103 MB) | `round_trip_loaded/data/` | all 4 legs ok, no abort; leg-3 verification 107%; 21 HALT events (7 in descent); min stability margin 0.46; ends at (2.03, +0.85) |
-| **Unloaded** | `round_trip_unloaded/round_trip_unloaded.mp4` (7.3 min, 111 MB) | `round_trip_unloaded/data/` | all 4 legs ok, no abort; leg-3 verification 106%; 40 HALT events (22 in descent); min margin 0.91; ends at (1.98, -0.10) |
+| **Loaded** (100 kg, +0.1 m CG) | `round_trip_loaded/round_trip_loaded.mp4` (6.6 min, 1280x720, 20 fps) | `round_trip_loaded/data/` | all 4 legs ok, no abort; leg-3 verification 107%; 21 HALT events (7 in descent); min stability margin 0.46; ends at (2.03, +0.85) |
+| **Unloaded** | `round_trip_unloaded/round_trip_unloaded.mp4` (7.3 min) | `round_trip_unloaded/data/` | all 4 legs ok, no abort; leg-3 verification 106%; 40 HALT events (22 in descent); min margin 0.91; ends at (1.98, -0.10) |
 
 ## What is in each `data/` folder
 `roundtrip.log` / `roundtrip.csv` (the test driver's own log and 2 Hz sampled state incl. ground-truth pose), `ground_truth_pose.csv` (Gazebo pose, 20 Hz: x, y, z, roll, pitch, yaw), `rosbag/` (ROS 2 bag, zstd-compressed mcap, ~68 MiB, ~2.5 M messages:
@@ -23,5 +23,5 @@ replay with `ros2 bag play round_trip_loaded/data/rosbag`), `events.json` (leg s
 * **These are demonstration recordings, not validation data.** Screen-encoding + bag + GUI add load: real-time factor over each run averaged 0.94 (min 0.915 loaded / 0.914 unloaded), guard flag `starved: false`, but below the 0.995 bar used for the validation matrix. The validated numbers are in the validation READMEs.
 * A first loaded take (`take1_starved_loaded/`, video + logs, bag removed to save disk) ran under a heavier recorder and was flagged STARVED (min RTF 0.875, mean 0.92); it also completed all four legs. It is kept only as a record of why the recorder was lightened; use the newer take.
 * Video timing: the video starts ~11 s before the test driver's leg 1 (guard check + recorder start-up); `events.json` already accounts for that.
-* Playback: standard H.264 mp4 (plays in VLC, browsers, mpv). The Gazebo window chrome (entity tree, RTF readout) is part of the capture; the readout in the corner shows the real-time factor.
+* Playback: H.264 mp4, High profile, yuv420p - plays in VLC, browsers, mpv and on phones. The original captures came off the recorder as High 4:4:4 Predictive / yuv444p, which decodes in ffmpeg but renders as a **black screen** in most players and on all hardware decoders; the release copies are re-encoded to yuv420p for that reason. If you re-record with `record_round_trip.sh`, check `ffprobe`'s `pix_fmt` before publishing the result. The Gazebo window chrome (entity tree, RTF readout) is part of the capture; the readout in the corner shows the real-time factor.
 * Tooling: `visualization/record_round_trip.sh <loaded|unloaded>` re-records; `visualization/run_live_gui.sh` runs it live without recording. The disk is ~97% full (2.3 GB free) - each new recording needs ~250 MB.

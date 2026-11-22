@@ -37,7 +37,7 @@ XID=$(python3 $V/x11_window.py id)
 $GUARD monitor $D/health.json 900 & MON=$!
 sleep 2
 VSTART=$(date +%s.%N)
-nice -n 10 timeout --signal=INT 900 gst-launch-1.0 -e ximagesrc xid=$XID use-damage=false show-pointer=false ! video/x-raw,framerate=20/1 ! videoconvert \
+nice -n 10 timeout --signal=INT 900 gst-launch-1.0 -e ximagesrc xid=$XID use-damage=false show-pointer=false ! video/x-raw,framerate=20/1 ! videoconvert ! video/x-raw,format=I420 \
     ! x264enc speed-preset=ultrafast bitrate=3000 key-int-max=40 ! h264parse ! mp4mux ! filesink location=$OUT/cargo_${MODE}_raw.mp4 > $D/gst_record.log 2>&1 & GST=$!
 sleep 1
 echo "RECORDING cargo demo (cargo_mode=$MODE): video start epoch $VSTART"
