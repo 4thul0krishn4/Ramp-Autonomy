@@ -515,6 +515,14 @@ Honest status — none of these are started. Details and reasoning in [`docs/roa
 Contributions are welcome — bug reports, independent reproduction, new ramp geometries or payload configurations, and work on anything in
 [`known-limitations.md`](docs/known-limitations.md).
 
+**New here?** The [good first issues](../../issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) are real work, not busywork — and two
+of them need no simulator at all. The highest-value ten minutes you can spend is
+[reporting the real-time factor your machine sustains](../../issues/1): the harness enforces a floor this world may no longer clear, and how
+widespread that is across hardware is genuinely unknown.
+
+**Have a real robot and a ramp?** See [the sim-to-real collaboration request](../../issues/11). That is the single biggest gap in this project,
+and it is not one I can close in simulation.
+
 Start with **[CONTRIBUTING.md](CONTRIBUTING.md)**. The one thing it asks above all else:
 
 > Say how you verified a change, against Gazebo ground truth rather than against the FSM's own report of its state.
