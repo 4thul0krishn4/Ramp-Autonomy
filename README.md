@@ -4,6 +4,7 @@
 
 ### Ramp ascent and descent for a *loaded* wheeled AMR — the part flat-floor navigation quietly gets wrong
 
+[![checks](https://img.shields.io/github/actions/workflow/status/skunal3318/Ramp-Autonomy/checks.yml?branch=main&style=for-the-badge&label=checks)](https://github.com/skunal3318/Ramp-Autonomy/actions/workflows/checks.yml)
 [![ROS 2](https://img.shields.io/badge/ROS_2-Jazzy-blue?style=for-the-badge&logo=ros&logoColor=white)](https://docs.ros.org/en/jazzy/)
 [![Gazebo](https://img.shields.io/badge/Gazebo-Harmonic-orange?style=for-the-badge)](https://gazebosim.org/)
 [![Nav2](https://img.shields.io/badge/Nav2-MPPI-green?style=for-the-badge)](https://docs.nav2.org/)
