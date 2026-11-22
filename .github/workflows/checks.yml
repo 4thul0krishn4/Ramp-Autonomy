@@ -1,0 +1,103 @@
+name: checks
+
+# Deliberately static checks only. A full ROS 2 Jazzy + Gazebo build in CI
+# would be slow and flaky, and a flaky badge is worse than no badge. These
+# run in seconds, need no ROS install, and catch the things a contributor
+# is actually likely to break in a pull request.
+#
+# What this does NOT prove: that the stack builds, that any node runs, or
+# that any published result reproduces. See docs/validation-methodology.md
+# for what real verification looks like in this project.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install check dependencies
+        run: python -m pip install --quiet pyyaml
+
+      - name: Python files compile
+        run: |
+          fail=0
+          while IFS= read -r f; do
+            python -m py_compile "$f" || { echo "::error file=$f::does not compile"; fail=1; }
+          done < <(git ls-files '*.py')
+          exit $fail
+
+      - name: Shell scripts parse
+        run: |
+          fail=0
+          while IFS= read -r f; do
+            bash -n "$f" || { echo "::error file=$f::bash syntax error"; fail=1; }
+          done < <(git ls-files '*.sh')
+          exit $fail
+
+      - name: XML is well formed (package.xml, urdf, sdf, xacro)
+        run: |
+          python - <<'PY'
+          import subprocess, sys, xml.etree.ElementTree as ET
+          files = subprocess.run(['git','ls-files','*.xml','*.urdf','*.sdf','*.xacro'],
+                                 capture_output=True, text=True).stdout.split()
+          bad = 0
+          for f in files:
+              try:
+                  ET.parse(f)
+              except Exception as e:
+                  print(f"::error file={f}::{e}")
+                  bad = 1
+          print(f"checked {len(files)} files")
+          sys.exit(bad)
+          PY
+
+      - name: YAML parses
+        run: |
+          python - <<'PY'
+          import subprocess, sys, yaml
+          files = subprocess.run(['git','ls-files','*.yaml','*.yml'],
+                                 capture_output=True, text=True).stdout.split()
+          bad = 0
+          for f in files:
+              try:
+                  list(yaml.safe_load_all(open(f)))
+              except Exception as e:
+                  print(f"::error file={f}::{e}")
+                  bad = 1
+          print(f"checked {len(files)} files")
+          sys.exit(bad)
+          PY
+
+      - name: Relative links in docs resolve
+        run: |
+          python - <<'PY'
+          import os, re, subprocess, sys
+          files = subprocess.run(['git','ls-files','*.md'],
+                                 capture_output=True, text=True).stdout.split()
+          bad = 0
+          for md in files:
+              base = os.path.dirname(md)
+              txt = open(md, encoding='utf-8', errors='replace').read()
+              for m in re.finditer(r'!?\[[^\]]*\]\(([^)#\s]+)', txt):
+                  t = m.group(1)
+                  if t.startswith(('http://', 'https://', 'mailto:', '#', '../../')):
+                      continue
+                  if not os.path.exists(os.path.normpath(os.path.join(base, t))):
+                      print(f"::error file={md}::broken relative link: {t}")
+                      bad = 1
+          print(f"checked {len(files)} markdown files")
+          sys.exit(bad)
+          PY
