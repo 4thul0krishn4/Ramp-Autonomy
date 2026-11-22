@@ -1,6 +1,6 @@
 #!/bin/bash
 set -o pipefail
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}
+WS=${RAMP_WS:?}
 SCRATCH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOGDIR=$SCRATCH/matrix_logs
 mkdir -p "$LOGDIR"

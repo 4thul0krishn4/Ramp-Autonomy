@@ -3,7 +3,7 @@
 #   hold    - a 1.75 s pause via the test hook (no stall latch); its unavoidable HALT side effects are logged
 #   ceiling - descent_brake's post-HALT restart profile (40% of ceiling, +5%/0.5 s) with NO pause
 #   reset   - the MPPI parameter pushes a HALT causes, unchanged values, NO pause
-H=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}/validation/phase8
+H=${RAMP_WS:?}/validation/phase8
 export INJECTOR=1 LOGDIR=$H/curved_unloaded_pause_logs PAUSE_DELAY=0.4 PAUSE_DURATION=1.75
 for arm in "hold pause_b_r" "ceiling ceil_r" "reset reset_r"; do
   set -- $arm

@@ -1,6 +1,6 @@
 #!/bin/bash
 # A/B on the ORIGINAL (unfixed) geometry with today's stack: same scripts, control worlds.
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; P8=$WS/validation/phase8; H=$P8/perception_regression; GUARD="python3 $P8/harness/harness_guard.py"
+WS=${RAMP_WS:?}; P8=$WS/validation/phase8; H=$P8/perception_regression; GUARD="python3 $P8/harness/harness_guard.py"
 source /opt/ros/jazzy/setup.bash; source $WS/install/setup.bash
 run() { local world=$1; shift
   $GUARD cleanup && $GUARD preflight || exit 2

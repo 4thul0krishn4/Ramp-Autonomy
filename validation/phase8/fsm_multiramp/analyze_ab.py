@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 """Table of per-run climb metrics for the ramp_mode trigger A/B. Usage: analyze_ab.py <dir> [glob-prefix filter]"""
 import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import bisect, collections, glob, json, re, sys, statistics as st, yaml
 d = sys.argv[1]
 prof = yaml.safe_load(open(os.path.join(RAMP_WS, 'src/ramp_autonomy_nav/config/ramp_mppi_params.yaml')))

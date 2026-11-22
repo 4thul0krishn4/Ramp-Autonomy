@@ -4,7 +4,7 @@
 #   - <name>_data/          round-trip CSV + log, ground-truth pose CSV (20 Hz), ROS bag (odometry, IMU, joints, slip, margin, stall/verified-progress, FSM state, perception, both LiDARs, commands),
 #                           launch log, guard verify/health, events.json (leg timestamps as offsets into the video)
 # Usage: visualization/record_round_trip.sh <loaded|unloaded>          Purely visualization/recording tooling - the autonomy code is not touched.
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; PAYLOAD=${1:-loaded}
+WS=${RAMP_WS:?}; PAYLOAD=${1:-loaded}
 MASS=100.0; CG=0.1; [ "$PAYLOAD" = "unloaded" ] && { MASS=0.0; CG=0.0; }
 source /opt/ros/jazzy/setup.bash; source $WS/install/setup.bash
 # Recording adds load (encoder + bag + GUI): run the CPU in the performance profile for the duration, restore afterwards.

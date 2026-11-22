@@ -299,13 +299,9 @@
       <geometry><cylinder radius="0.05" length="0.06"/></geometry>
       <material name="wheel_black"/>
     </visual>
-    <!-- Mount pedestal (visual-only, no collision): lidar_joint deliberately holds the sensor 0.08 m above the measured corner surface
-         (mir_ramp_corner_surface_z) so its ray-casting frame keeps the geometry phase 4's accuracy table was validated against. Nothing was
-         modelled across that standoff, so the sensor body rendered as a block hovering ~0.03 m over the deck. This fills the gap between the
-         real surface and the sensor's own underside. The joint origin, the sensor frame and every collision/inertial block are untouched -
-         this is a rendering fix only, exactly like the chassis mesh swap in results.md.
-         Frame note: lidar_joint rolls this link +90 deg about X, so the link's +Y axis is world +Z. The pedestal is therefore offset along
-         local -Y to travel DOWN in the world, and rolled -90 deg about X so its own cylinder axis stands vertically. -->
+    <!-- Mount pedestal (visual-only, no collision): the joint holds the sensor 0.08 m above the measured corner surface so its ray-casting
+         frame keeps the geometry phase 4's accuracy table was validated against, but nothing was modelled across that standoff, so the body
+         rendered hovering ~0.03 m over the deck. The joint rolls this link +90 deg about X, so local -Y is world down. -->
     <xacro:property name="ramp_lidar_standoff" value="0.08"/>   <!-- lidar_joint's z above mir_ramp_corner_surface_z -->
     <xacro:property name="ramp_lidar_radius"   value="0.05"/>   <!-- sensor body radius, i.e. how far down its underside reaches -->
     <xacro:property name="ramp_lidar_gap"      value="${ramp_lidar_standoff - ramp_lidar_radius}"/>

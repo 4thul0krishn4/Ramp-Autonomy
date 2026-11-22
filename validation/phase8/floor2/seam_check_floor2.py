@@ -2,10 +2,7 @@
 """Explicit named-pair top-surface continuity check for every REAL join in the Floor-2 extension (exact corner math on the SDF; no visual inspection).
 This is the check that would have caught the 0.05 m box-centre-vs-top-surface authoring step (construction-site freeze, ramp-world crest freeze)."""
 import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import sys
 sys.path.insert(0, os.path.join(RAMP_WS, 'validation/phase8/crest_freeze'))
 import seam_geometry as sg

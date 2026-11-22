@@ -4,7 +4,7 @@
 # RTF >= 0.95), RTF/load monitor, `validation_test_ekf_groundtruth.py`, 220 s cap. Any guard failure stops the run.
 # Characterises the cell's pass/fail rate; changes no code under test.
 set -o pipefail
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}
+WS=${RAMP_WS:?}
 GUARD="python3 $WS/validation/phase8/harness/harness_guard.py"
 LOGDIR=${LOGDIR:-$WS/validation/phase8/curved_unloaded_repeat_logs}
 N=${1:-5}
@@ -29,7 +29,7 @@ for i in $(seq ${START:-1} $N); do
     [[ "$status" == *"active"* ]] || abort "controller_server never came up for $label"
   fi
   $GUARD verify | tee "$LOGDIR/${label}_verify.txt"; [[ ${PIPESTATUS[0]} -eq 0 ]] || abort "verify failed for $label"
-  $GUARD monitor "$LOGDIR/${label}_health.json" 900 & MON=$!; python3 ${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}/validation/phase8/halt_loop/slip_recorder.py "$LOGDIR/${label}_slip.json" > "$LOGDIR/${label}_rec.log" 2>&1 & REC=$!
+  $GUARD monitor "$LOGDIR/${label}_health.json" 900 & MON=$!; python3 ${RAMP_WS:?}/validation/phase8/halt_loop/slip_recorder.py "$LOGDIR/${label}_slip.json" > "$LOGDIR/${label}_rec.log" 2>&1 & REC=$!
   if [ -n "$INJECTOR" ]; then python3 "$WS/validation/phase8/stall_detector_control/crest_pause_injector.py" "$LOGDIR/${label}_pause.json" ${PAUSE_DELAY:-0.4} ${PAUSE_DURATION:-1.75} ${INJECT_MODE:-hold} > "$LOGDIR/${label}_injector.log" 2>&1 & INJ=$!; fi
   timeout 360 python3 "$WS/validation/phase8/validation_test_ekf_groundtruth.py" "$label" ${GZW:-ramp_world_curved} > "$LOGDIR/${label}_result.log" 2>&1
   echo "exit code: $?"

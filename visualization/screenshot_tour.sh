@@ -1,7 +1,7 @@
 #!/bin/bash
 # Launch the full stack with the GUI (unloaded by default), then capture screenshots of the Gazebo window from a list of camera poses.
 # Usage: visualization/screenshot_tour.sh <out_dir> <loaded|unloaded> "name:x:y:z:lookx:looky:lookz" ...
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; OUT=$1; PAYLOAD=$2; shift 2
+WS=${RAMP_WS:?}; OUT=$1; PAYLOAD=$2; shift 2
 MASS=0.0; CG=0.0; [ "$PAYLOAD" = "loaded" ] && { MASS=100.0; CG=0.1; }
 source /opt/ros/jazzy/setup.bash; source $WS/install/setup.bash; export DISPLAY=${DISPLAY:-:0}
 GUARD="python3 $WS/validation/phase8/harness/harness_guard.py"

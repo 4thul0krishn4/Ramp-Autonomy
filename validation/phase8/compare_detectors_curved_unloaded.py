@@ -12,11 +12,7 @@ Decision rule fixed BEFORE the original-detector runs: the detector is 'implicat
 otherwise 'not distinguishable'. Power is reported honestly: with 6 vs 6, only a difference such as 6/6 vs <=1/6
 failing is detectable. Ground-truth fail = max |y| beyond the 1.5 m panel half-width (the matrix's own verdict).
 """
-import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import sys, re, glob, json, math, itertools, random
 import numpy as np
 

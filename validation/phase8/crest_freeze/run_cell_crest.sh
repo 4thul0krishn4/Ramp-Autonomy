@@ -5,7 +5,7 @@
 # RTF >= 0.95), RTF/load monitor, `validation_test_ekf_groundtruth.py`, 220 s cap. Any guard failure stops the run.
 # Characterises the cell's pass/fail rate; changes no code under test.
 set -o pipefail
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}
+WS=${RAMP_WS:?}
 GUARD="python3 $WS/validation/phase8/harness/harness_guard.py"
 LOGDIR=${LOGDIR:-$WS/validation/phase8/curved_unloaded_repeat_logs}
 N=${1:-5}

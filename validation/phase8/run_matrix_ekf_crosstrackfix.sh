@@ -1,6 +1,6 @@
 #!/bin/bash
 set -o pipefail
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}
+WS=${RAMP_WS:?}
 SCRATCH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOGDIR=$WS/validation/phase8/matrix_ekf_crosstrackfix_logs
 mkdir -p "$LOGDIR"
@@ -46,7 +46,7 @@ run_cell() {
       return 1
     fi
   fi
-  timeout 220 python3 "${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}/validation/phase8/validation_test_ekf_groundtruth.py" "$label" "$gz_world_name" > "$LOGDIR/${label}_result.log" 2>&1
+  timeout 220 python3 "${RAMP_WS:?}/validation/phase8/validation_test_ekf_groundtruth.py" "$label" "$gz_world_name" > "$LOGDIR/${label}_result.log" 2>&1
   echo "exit code: $?"
   tail -n 30 "$LOGDIR/${label}_result.log"
   kill_stale

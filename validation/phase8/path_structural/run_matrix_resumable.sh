@@ -13,7 +13,7 @@
 # Any guard failure STOPS the whole run (exit 2/3) instead of recording a starved trial.
 # New LOGDIR so the historical baseline logs (matrix_ekf_crosstrackfix_logs) are not overwritten.
 set -o pipefail
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}
+WS=${RAMP_WS:?}
 GUARD="python3 $WS/validation/phase8/harness/harness_guard.py"
 LOGDIR=${LOGDIR:-$WS/validation/phase8/matrix_regression_cleanhost_logs}
 mkdir -p "$LOGDIR"

@@ -4,7 +4,7 @@
 #   2) the full 7-cell matrix
 #   3) both construction-site round trips
 # All guarded (verified cleanup, preflight, one instance, RTF >= 0.95); any guard failure stops the run.
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}
+WS=${RAMP_WS:?}
 P8=$WS/validation/phase8
 GUARD="python3 $P8/harness/harness_guard.py"
 unset INJECTOR INJECT_MODE PAUSE_DELAY PAUSE_DURATION

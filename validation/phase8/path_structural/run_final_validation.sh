@@ -4,7 +4,7 @@
 #   1) positive control (6 normal + 6 freeze sessions, construction site)      -> stall_detector_control/data/final_*.npz (only if RUN_PC=1)
 #   2) full 7-cell matrix                                                       -> matrix_final_logs/
 #   3) both construction-site round trips                                       -> construction_site_descent/roundtrip_final_*
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; P8=$WS/validation/phase8; H=$P8/path_structural
+WS=${RAMP_WS:?}; P8=$WS/validation/phase8; H=$P8/path_structural
 GUARD="python3 $P8/harness/harness_guard.py"
 INST=$WS/install/ramp_autonomy_control/lib/python3.12/site-packages/ramp_autonomy_control/motion_stall_detector_node.py
 echo "detector installed: $(sha256sum $INST | cut -c1-8)   nav2_params: $(sha256sum $WS/install/ramp_autonomy_nav/share/ramp_autonomy_nav/config/nav2_params.yaml | cut -c1-12)"

@@ -3,10 +3,7 @@
 ramp-2 traversal (linearly interpolated between samples) to the footprint of every physical Floor-2 / ramp-2 object. Buffer standard: >= 1.5 m.
 Usage: clearance_from_trace.py <ramp2_traversal.csv>"""
 import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import csv, json, sys
 import numpy as np
 rows = [r for r in csv.DictReader(open(sys.argv[1])) if r.get('gz_x') not in (None, '')]

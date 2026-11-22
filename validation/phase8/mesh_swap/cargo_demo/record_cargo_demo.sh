@@ -8,7 +8,7 @@
 # cargo_mode:=loose is an opt-in DEMO capability (see robot.urdf.xacro / docs/construction_site_design.md "Unsecured cargo demo mode") - isolated from every
 # validated result: this script is the ONLY place in the project that ever passes cargo_mode:=loose.
 # Usage: record_cargo_demo.sh <secured|loose> <out_dir>
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; MODE=$1; OUT=$2; D=$OUT/data
+WS=${RAMP_WS:?}; MODE=$1; OUT=$2; D=$OUT/data
 SPAWN_X=47.9702; SPAWN_Y=0.0; SPAWN_Z=3.48
 V=$WS/visualization; GUARD="python3 $WS/validation/phase8/harness/harness_guard.py"
 source /opt/ros/jazzy/setup.bash; source $WS/install/setup.bash

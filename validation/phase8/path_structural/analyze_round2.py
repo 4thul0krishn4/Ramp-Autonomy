@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
 """Round 2: corrected turn procedure, curved / normal / unloaded. Pooled Arm P (scoped) and Arm P-fixed (unscoped) samples.
 A run FAILS if E1 (max|y| > 1.5 m) or E2' (did not reach the ramp foot: final gz x > 5.0 m or z > 0.5 m)."""
-import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import sys, os, glob, re
 import numpy as np
 sys.path.insert(0, os.path.join(RAMP_WS, 'validation/phase8')); sys.path.insert(0, os.path.join(RAMP_WS, 'validation/phase8/path_structural'))

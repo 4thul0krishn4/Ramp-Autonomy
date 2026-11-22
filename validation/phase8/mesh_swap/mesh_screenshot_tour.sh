@@ -1,7 +1,7 @@
 #!/bin/bash
 # Live GUI screenshots of the new Husky-mesh chassis: launches the full stack (loaded) with the GUI, drives the SAME round-trip driver used for the regression
 # check in the background, and grabs close-in camera shots of the robot on ramp 1 and on the populated elevated site once it gets there.
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}
+WS=${RAMP_WS:?}
 OUT=$(cd "$(dirname "$1")" && pwd)/$(basename "$1")
 source /opt/ros/jazzy/setup.bash; source $WS/install/setup.bash; export DISPLAY=${DISPLAY:-:0}
 GUARD="python3 $WS/validation/phase8/harness/harness_guard.py"

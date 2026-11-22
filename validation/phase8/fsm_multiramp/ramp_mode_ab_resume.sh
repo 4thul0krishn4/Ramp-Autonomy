@@ -1,6 +1,6 @@
 #!/bin/bash
 # Resume of ramp_mode_ab.sh after a pause: the 6 cells not yet run (same protocol, same alternation rule: odd trial = current first, even = gated first).
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; D=$WS/validation/phase8/fsm_multiramp
+WS=${RAMP_WS:?}; D=$WS/validation/phase8/fsm_multiramp
 INST=$WS/install/ramp_autonomy_nav/lib/python3.12/site-packages/ramp_autonomy_nav/state_machine_node.py
 export HG_LOW_RTF=0.85
 for cell in "loaded gated 2" "loaded current 2" "unloaded current 3" "unloaded gated 3" "loaded current 3" "loaded gated 3"; do

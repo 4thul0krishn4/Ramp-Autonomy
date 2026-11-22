@@ -3,7 +3,7 @@
 #   Arm P  : scoped detector (ea1bcee5) x12   ->  armP2_logs
 #   swap to the unscoped fixed detector (48625b76), rebuild, verify
 #   Arm P-fixed: x12                          ->  armPfixed2_logs        (the FIXED detector is LEFT INSTALLED at the end)
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; P8=$WS/validation/phase8; H=$P8/path_structural
+WS=${RAMP_WS:?}; P8=$WS/validation/phase8; H=$P8/path_structural
 D=$P8/stall_detector_control/data
 SRC=$WS/src/ramp_autonomy_control/ramp_autonomy_control/motion_stall_detector_node.py
 INST=$WS/install/ramp_autonomy_control/lib/python3.12/site-packages/ramp_autonomy_control/motion_stall_detector_node.py

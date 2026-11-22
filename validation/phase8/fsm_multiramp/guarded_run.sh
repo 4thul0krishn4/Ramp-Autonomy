@@ -2,7 +2,7 @@
 # usage: guarded_run.sh <outdir> <name> <payload_mass> <payload_cg> <cmd...>
 # Guarded clean-host trial (same protocol as floor2/run_floor2_verification.sh): quiet-host wait -> verified by-PID cleanup -> preflight -> headless launch of the
 # full stack on construction_site -> readiness -> guard verify (RTF gate) -> health monitor -> command -> summarize -> cleanup. Up to 3 attempts.
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; P8=$WS/validation/phase8; GUARD="python3 $P8/harness/harness_guard.py"
+WS=${RAMP_WS:?}; P8=$WS/validation/phase8; GUARD="python3 $P8/harness/harness_guard.py"
 source /opt/ros/jazzy/setup.bash; source $WS/install/setup.bash
 OUTDIR=$1; NAME=$2; MASS=$3; CG=$4; shift 4; mkdir -p $OUTDIR
 busy() { python3 - <<'PY'

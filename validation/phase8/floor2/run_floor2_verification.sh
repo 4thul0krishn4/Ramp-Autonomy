@@ -4,7 +4,7 @@
 #   2) Floor-1-only round trip, UNLOADED
 #   3) ramp-2 traversal to Floor 2, empty payload
 # Each: verified cleanup -> preflight -> launch -> readiness -> verify -> monitor -> test -> cleanup. Retry on a guard stop (up to 3 attempts).
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; P8=$WS/validation/phase8; H=$P8/floor2; CS=$P8/construction_site_descent; GUARD="python3 $P8/harness/harness_guard.py"
+WS=${RAMP_WS:?}; P8=$WS/validation/phase8; H=$P8/floor2; CS=$P8/construction_site_descent; GUARD="python3 $P8/harness/harness_guard.py"
 source /opt/ros/jazzy/setup.bash; source $WS/install/setup.bash
 echo "detector $(sha256sum $WS/install/ramp_autonomy_control/lib/python3.12/site-packages/ramp_autonomy_control/motion_stall_detector_node.py | cut -c1-8)  world $(sha256sum $WS/install/ramp_autonomy_gazebo/share/ramp_autonomy_gazebo/worlds/construction_site.sdf | cut -c1-8)"
 busy() { python3 - <<'PY'

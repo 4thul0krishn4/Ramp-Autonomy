@@ -1,6 +1,6 @@
 #!/bin/bash
 # Guarded runner: one sim at a time, verified cleanup / preflight / verify, per check.
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; P8=$WS/validation/phase8; H=$P8/perception_regression; GUARD="python3 $P8/harness/harness_guard.py"
+WS=${RAMP_WS:?}; P8=$WS/validation/phase8; H=$P8/perception_regression; GUARD="python3 $P8/harness/harness_guard.py"
 source /opt/ros/jazzy/setup.bash; source $WS/install/setup.bash
 run() {   # world  cmd...
   local world=$1; shift

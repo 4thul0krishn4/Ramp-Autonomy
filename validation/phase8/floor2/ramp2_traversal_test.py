@@ -5,10 +5,7 @@ Reuses the round-trip driver's Test class (its drive_to / physical-check / sampl
 PASS = all four legs physically verified (GT vs EKF displacement <= 0.5 m), no abort/timeout, final ground-truth pose on Floor 2 (z >= 6.65 m, x within the slab, near the
 target), and ground-truth lateral excursion on Floor 1 -> ramp 2 -> Floor 2 <= 1.0 m.   Usage: ramp2_traversal_test.py <out.csv>"""
 import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import csv, json, math, sys, time
 sys.path.insert(0, os.path.join(RAMP_WS, 'validation/phase8/construction_site_descent'))
 import arc_turn_followpath_test_ekf as R          # module-level code only defines things; OUT_CSV is read from argv[1]

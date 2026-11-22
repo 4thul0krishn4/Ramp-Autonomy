@@ -12,10 +12,7 @@ Real-world grounding (see docs/construction_site_design.md, "Floor 2"): OSHA 192
 1926.701(b) (protruding rebar guarded against impalement), 1926.706 (masonry walls > 8 ft braced), floor-to-floor 3.0-3.6 m, column starter-bar lap 40-50 bar diameters.
 """
 import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import json, math, re, sys
 
 WORLD = os.path.join(RAMP_WS, 'src/ramp_autonomy_gazebo/worlds/construction_site.sdf')

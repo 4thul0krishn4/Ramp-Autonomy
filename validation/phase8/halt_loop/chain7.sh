@@ -1,6 +1,6 @@
 #!/bin/bash
 export HG_LOW_RTF=0.85
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; D=$WS/validation/phase8/halt_loop; I=$WS/install/ramp_autonomy_nav/lib/python3.12/site-packages/ramp_autonomy_nav/state_machine_node.py
+WS=${RAMP_WS:?}; D=$WS/validation/phase8/halt_loop; I=$WS/install/ramp_autonomy_nav/lib/python3.12/site-packages/ramp_autonomy_nav/state_machine_node.py
 mkdir -p $D/run8_synthetic
 for arm in pre fix; do
   if [ $arm = pre ]; then cp $D/state_machine_node.PRE_PERSIST.py $I; else cp $WS/src/ramp_autonomy_nav/ramp_autonomy_nav/state_machine_node.py $I; fi

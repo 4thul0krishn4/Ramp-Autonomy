@@ -2,10 +2,7 @@
 """Grade one multiramp_nav2_test.py run: (a) are the /ramp_state labels consistent with the PHYSICAL motion (Gazebo ground-truth dz/dt), (b) does the live controller carry
 the parameter profile belonging to the current state (GetParameters on /controller_server), (c) legs / RTF summary.  Usage: analyze_run.py <run.json> [yaml]"""
 import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import bisect, json, sys, yaml, collections
 run = json.load(open(sys.argv[1]))
 prof = yaml.safe_load(open(sys.argv[2] if len(sys.argv) > 2 else os.path.join(RAMP_WS, 'src/ramp_autonomy_nav/config/ramp_mppi_params.yaml')))

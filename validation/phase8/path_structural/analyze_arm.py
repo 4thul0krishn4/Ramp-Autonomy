@@ -2,11 +2,7 @@
 """Compare a structural-path arm (curved / normal / unloaded) against the three baselines with the project's statistics.
 Usage: analyze_arm.py <label> <dir> <prefix> [<label2> <dir2> <prefix2> ...]
 Failure = ground-truth max|y| > 1.5 m. Baselines (same instrument): original 0/6, fixed 10/10, scoped 5/14."""
-import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import sys, os, re, math, glob
 import numpy as np
 from scipy import stats

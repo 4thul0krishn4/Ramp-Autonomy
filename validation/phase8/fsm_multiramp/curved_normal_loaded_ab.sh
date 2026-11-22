@@ -1,7 +1,7 @@
 #!/bin/bash
 # Interleaved A/B on curved world, normal friction, loaded 100 kg (matrix verdict PASS(0 HALTs) -> MARGINAL(2 HALTs)): NEW vs ORIGINAL state machine, 6 fresh-launch trials each,
 # alternating new/old per trial so slow host drift cannot favour an arm. The installed state_machine_node.py is swapped between trials and restored (sha-checked) at the end.
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; INST=$WS/install/ramp_autonomy_nav/lib/python3.12/site-packages/ramp_autonomy_nav/state_machine_node.py
+WS=${RAMP_WS:?}; INST=$WS/install/ramp_autonomy_nav/lib/python3.12/site-packages/ramp_autonomy_nav/state_machine_node.py
 NEW=$WS/src/ramp_autonomy_nav/ramp_autonomy_nav/state_machine_node.py; OLD=$WS/validation/phase8/fsm_multiramp/state_machine_node.ORIGINAL.py
 export WORLD=curved MASS=100.0 CG=0.1 GZW=ramp_world_curved
 for i in 1 2 3 4 5 6; do

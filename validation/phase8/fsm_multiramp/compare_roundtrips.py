@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 """Compare Floor-1-only round trips: OLD-FSM runs (floor2/ final-world runs + run1_before_fence_fix) vs NEW-FSM runs (run3_regression): driver metrics + the /ramp_state sequence (from the CSVs' state column)."""
-import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import csv, re, sys, os
 B = os.path.join(RAMP_WS, 'validation/phase8')
 def seq(csvp):

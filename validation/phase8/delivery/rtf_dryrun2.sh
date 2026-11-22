@@ -6,9 +6,9 @@
 #   D  loaded, detachable, DETACHED once at start (payload a free 100 kg body resting on the chassis - the post-delivery state)
 #   C  unloaded (reference)
 # usage: rtf_dryrun.sh <out.txt> <order like "A B D C A B D C">
-W=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}/install/ramp_autonomy_gazebo/share/ramp_autonomy_gazebo/worlds
-source /opt/ros/jazzy/setup.bash; source ${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}/install/setup.bash
-G="python3 ${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}/validation/phase8/harness/harness_guard.py"
+W=${RAMP_WS:?}/install/ramp_autonomy_gazebo/share/ramp_autonomy_gazebo/worlds
+source /opt/ros/jazzy/setup.bash; source ${RAMP_WS:?}/install/setup.bash
+G="python3 ${RAMP_WS:?}/validation/phase8/harness/harness_guard.py"
 OUT=$1; shift
 sed 's#<real_time_factor>1.0</real_time_factor>#<real_time_factor>100.0</real_time_factor>#' $W/construction_site.sdf > $W/ramp_world_rtfdry.sdf
 echo "# RTF dry-run, max-speed, one 60 s window per run (sim time / real time from the world stats topic) after a 30 s settle; order: $*" > $OUT

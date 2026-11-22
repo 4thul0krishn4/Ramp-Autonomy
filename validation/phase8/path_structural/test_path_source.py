@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 """Unit checks for ramp_autonomy_nav.path_source (no simulator needed)."""
 import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import math, sys
 sys.path.insert(0, os.path.join(RAMP_WS, 'validation/phase8'))
 import rclpy.time

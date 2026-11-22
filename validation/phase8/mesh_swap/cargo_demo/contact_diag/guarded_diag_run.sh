@@ -1,5 +1,5 @@
 #!/bin/bash
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; P8=$WS/validation/phase8; GUARD="python3 $P8/harness/harness_guard.py"
+WS=${RAMP_WS:?}; P8=$WS/validation/phase8; GUARD="python3 $P8/harness/harness_guard.py"
 source /opt/ros/jazzy/setup.bash; source $WS/install/setup.bash
 OUTDIR=$1; NAME=$2; mkdir -p $OUTDIR
 for attempt in 1 2 3; do
@@ -14,7 +14,7 @@ for attempt in 1 2 3; do
   for i in $(seq 1 10); do $GUARD verify > $OUTDIR/${NAME}_verify.txt 2>&1 && break; sleep 5; done
   $GUARD verify >> $OUTDIR/${NAME}_verify.txt 2>&1 || { echo "verify failed (attempt $attempt): $(tail -1 $OUTDIR/${NAME}_verify.txt)"; $GUARD cleanup; sleep 30; continue; }
   $GUARD monitor $OUTDIR/${NAME}_health.json 300 & MON=$!
-  cd ${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}/validation/phase8/mesh_swap/cargo_demo
+  cd ${RAMP_WS:?}/validation/phase8/mesh_swap/cargo_demo
   python3 contact_diag_run.py $OUTDIR/${NAME}.csv $OUTDIR/${NAME}_payload.csv $OUTDIR/${NAME}_contact.csv --from-top --no-rtf-gate > $OUTDIR/${NAME}.log 2>&1
   RC=$?
   echo "exit=$RC (attempt $attempt)"

@@ -7,10 +7,7 @@
  5. nothing new overlaps an existing model (0.3 m margin), east fence moved only
 """
 import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import json, re, sys, itertools
 sys.path.insert(0, os.path.join(RAMP_WS, 'validation/phase8/crest_freeze'))
 L = json.load(open(os.path.join(RAMP_WS, 'validation/phase8/floor2/floor2_layout.json')))

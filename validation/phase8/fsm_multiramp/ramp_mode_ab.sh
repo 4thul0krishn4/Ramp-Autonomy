@@ -2,7 +2,7 @@
 # Interleaved A/B of the ASCENT->TRANSITION trigger on real Nav2/MPPI climbs (both ramps in every run): CURRENT (multi-ramp FSM, sha 067e9d6e: TRANSITION for the whole climb)
 # vs GATED (crest-only debounced pre-emption: ramp_mode governs the sustained climb, transition_mode the last ~2.7 m). Fixed switcher installed for both arms.
 # Unloaded and loaded (100 kg), 3 fresh-launch trials per cell per arm, order alternating so host drift cannot favour an arm.
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; D=$WS/validation/phase8/fsm_multiramp
+WS=${RAMP_WS:?}; D=$WS/validation/phase8/fsm_multiramp
 INST=$WS/install/ramp_autonomy_nav/lib/python3.12/site-packages/ramp_autonomy_nav/state_machine_node.py
 export HG_LOW_RTF=0.85
 for i in 1 2 3; do

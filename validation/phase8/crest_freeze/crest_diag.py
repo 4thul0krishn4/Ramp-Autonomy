@@ -5,11 +5,7 @@ angular velocity (/joint_states); the commanded twist reaching the DiffDrive plu
 per-wheel COMMANDED angular velocity follows (differential kinematics: wheel_radius 0.12, track 0.7); /wheel_slip;
 /verified_progress_m and /raw_wheel_distance_m and /motion_stalled (the detector's signals); EKF pose; /ramp_state.
 Usage: crest_diag.py <label> <gz_world_name> <out.npz>"""
-import os
-# Workspace root. Set RAMP_WS to the ramp_autonomy_ws checkout before running.
-RAMP_WS = os.environ.get('RAMP_WS')
-if not RAMP_WS:
-    raise SystemExit('set RAMP_WS to the ramp_autonomy_ws workspace root')
+RAMP_WS = os.environ['RAMP_WS']
 import json, math, os, subprocess, sys, threading, time
 import numpy as np
 import rclpy

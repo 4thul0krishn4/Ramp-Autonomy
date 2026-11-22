@@ -2,7 +2,7 @@
 # Reverification after the ramp-geometry fix, corrected turn procedure (defaults), unscoped fixed detector, ground-truth ascent gate.
 #   12 runs each of the 4 loaded cells, 6 each of the 2 unloaded regression cells, then the full 7-cell matrix and both round trips.
 # Guard-safe: waits for a quiet host, runs each trial individually, retries a trial after a guard stop (up to 4 times).
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; P8=$WS/validation/phase8; H=$P8/crest_freeze; GUARD="python3 $P8/harness/harness_guard.py"
+WS=${RAMP_WS:?}; P8=$WS/validation/phase8; H=$P8/crest_freeze; GUARD="python3 $P8/harness/harness_guard.py"
 unset INJECTOR INJECT_MODE PAUSE_DELAY PAUSE_DURATION CLOSED_LOOP_TURN PLATFORM_TURN_M PATH_SPACING
 export GT_TRACE=1
 source /opt/ros/jazzy/setup.bash; source $WS/install/setup.bash

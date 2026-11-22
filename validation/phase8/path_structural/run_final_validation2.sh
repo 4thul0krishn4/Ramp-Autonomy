@@ -2,7 +2,7 @@
 # Retry wrapper: the harness guard (correctly) refuses to run trials on a contended host. This waits for a quiet host (busy CPU < 12% for
 # 3 consecutive 20 s samples, i.e. no sim running), then runs the resumable matrix, then the round trips with the same verify/monitor
 # guards; on any guard stop it waits and retries (resuming), up to a limit. Nothing is lowered: the guard thresholds are unchanged.
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; P8=$WS/validation/phase8; H=$P8/path_structural
+WS=${RAMP_WS:?}; P8=$WS/validation/phase8; H=$P8/path_structural
 GUARD="python3 $P8/harness/harness_guard.py"
 unset INJECTOR INJECT_MODE PAUSE_DELAY PAUSE_DURATION CLOSED_LOOP_TURN PLATFORM_TURN_M PATH_SPACING
 export GT_TRACE=1 LOGDIR=$H/matrix_final_logs

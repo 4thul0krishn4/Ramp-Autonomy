@@ -1,5 +1,5 @@
 #!/bin/bash
-D=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}/validation/phase8/delivery; O=$D/run5_rtf_states
+D=${RAMP_WS:?}/validation/phase8/delivery; O=$D/run5_rtf_states
 export HG_LOW_RTF=0.85 SPAWN_X=79.5 SPAWN_Y=0.0 SPAWN_Z=6.68
 hostok() { [ "$(cat /sys/class/power_supply/ACAD/online)" = 1 ] && [ "$(powerprofilesctl get)" = performance ] && [ "$(cat /sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference)" = performance ]; }
 for rep in 7 8 9; do

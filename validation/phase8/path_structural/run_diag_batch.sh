@@ -1,5 +1,5 @@
 #!/bin/bash
-H=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}/validation/phase8/path_structural
+H=${RAMP_WS:?}/validation/phase8/path_structural
 unset INJECTOR INJECT_MODE PAUSE_DELAY PAUSE_DURATION
 echo "## baseline spacing 0.4 x3"
 LOGDIR=$H/diag_logs LABEL_PREFIX=diag_base04_r bash $H/run_cell_diag.sh 3 || exit 2

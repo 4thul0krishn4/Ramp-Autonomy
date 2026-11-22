@@ -5,7 +5,7 @@
 #   --no-trip = just bring the world up and leave it running (drive it yourself / watch)
 # Purely visualization tooling: it does not touch the autonomy code, only the environment the GUI process inherits (see visualization/README.md).
 # To stop everything afterwards:  python3 validation/phase8/harness/harness_guard.py cleanup
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}
+WS=${RAMP_WS:?}
 PAYLOAD=${1:-loaded}; TRIP=1; [ "$2" = "--no-trip" ] && TRIP=0
 MASS=100.0; CG=0.1; [ "$PAYLOAD" = "unloaded" ] && { MASS=0.0; CG=0.0; }
 source /opt/ros/jazzy/setup.bash; source $WS/install/setup.bash

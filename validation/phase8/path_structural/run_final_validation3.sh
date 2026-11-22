@@ -1,6 +1,6 @@
 #!/bin/bash
 # After the platform-drive fix: 5 repeats of curved / 0.45 / loaded (recorded), then the full matrix again. Reuses the quiet-host wrapper for the matrix.
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}; P8=$WS/validation/phase8; H=$P8/path_structural
+WS=${RAMP_WS:?}; P8=$WS/validation/phase8; H=$P8/path_structural
 unset INJECTOR INJECT_MODE PAUSE_DELAY PAUSE_DURATION CLOSED_LOOP_TURN PLATFORM_TURN_M PATH_SPACING
 export GT_TRACE=1
 source /opt/ros/jazzy/setup.bash; source $WS/install/setup.bash

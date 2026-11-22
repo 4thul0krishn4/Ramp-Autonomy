@@ -2,7 +2,7 @@
 # One fully guarded session: verified cleanup -> preflight -> fresh launch -> readiness wait -> session -> cleanup.
 # Usage: run_session.sh <label> <normal|freeze> <unloaded|loaded> <id> [clearance f,b,s] [events]
 # Any guard failure stops the session (exit 2) instead of producing a starved/contaminated recording.
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}
+WS=${RAMP_WS:?}
 HERE=$WS/validation/phase8/stall_detector_control
 GUARD="python3 $WS/validation/phase8/harness/harness_guard.py"
 LABEL=$1; MODE=$2; PAYLOAD=$3; ID=$4; CLEAR=${5:-0.06,0.08,0.04}; EVENTS=${6:-straight_raw,arc,taper}

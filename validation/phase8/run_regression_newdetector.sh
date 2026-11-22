@@ -1,7 +1,7 @@
 #!/bin/bash
 # Regression pass on the FIXED stall detector: the 7-cell matrix, then the loaded and unloaded
 # construction-site round trips, each guarded (verified cleanup, preflight, one instance, RTF >= 0.95).
-WS=${RAMP_WS:?set RAMP_WS to the ramp_autonomy_ws workspace root}
+WS=${RAMP_WS:?}
 P8=$WS/validation/phase8
 GUARD="python3 $P8/harness/harness_guard.py"
 export LOGDIR=$P8/matrix_regression_newdetector_logs
