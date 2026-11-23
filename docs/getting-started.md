@@ -70,8 +70,8 @@ python3 arc_turn_followpath_test_ekf.py <out.csv>
 
 ### If the guard refuses to start
 
-`harness_guard.py` enforces a hard real-time-factor floor of 0.95 before any guarded trial. The construction-site world no longer clears that
-on ordinary hardware - roughly 0.90-0.92 headless and 0.70 with the Gazebo GUI up on a 12-core laptop with an RTX 3050 - so a run there can
+`harness_guard.py` enforces a hard real-time-factor floor of 0.95 before any guarded trial, and the full stack does not clear it on ordinary
+hardware: roughly 0.91-0.93 headless and 0.70 with the Gazebo GUI up, on a 12-core laptop with an RTX 3050 running on mains power. So a run can
 abort immediately with:
 
 ```
@@ -79,9 +79,11 @@ abort immediately with:
 !! real-time factor 0.91 < 0.95 (simulator cannot keep real time)
 ```
 
-That is the guard working, not a broken checkout. `HG_LOW_RTF` will not get you past it (it relaxes a different, in-run check). Running
-`headless:=true` helps but is unlikely to be enough on its own. See `known-limitations.md` for the full picture - and if you hit this, please
-open an issue saying what real-time factor your machine sustains, because how widespread this is across hardware is not yet known.
+That is the guard working, not a broken checkout. `HG_LOW_RTF` will not get you past it, because it relaxes a different, in-run check.
+`headless:=true` helps but is not enough on its own. The cost is this project's own nodes rather than the world or the sensors; see
+`known-limitations.md` for the measurements. Check you are on mains power before anything else, since the same machine on battery runs the
+full stack at about half the real-time factor. If you still hit it, please open an issue saying what your machine sustains and whether it was
+plugged in.
 
 ### A note on the recorded data
 

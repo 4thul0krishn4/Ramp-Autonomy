@@ -17,24 +17,32 @@ round" status as of 2026-09-20, plus later items opened since.
 - **Real-time factor headroom is thin on the full autonomous stack**, roughly 7% (mean 0.93 whole-stack; a heavy measurement probe alone costs
   about 0.05 of it). The clean-host guard's low-real-time-factor threshold is configurable (`HG_LOW_RTF`) specifically because this margin is
   thinner than the guard's original calibration assumed.
-- **The clean-host guard now refuses guarded trials on the construction-site world on commodity hardware.** `harness_guard.py`'s `MIN_RTF` is a
-  hard gate of 0.95, checked before every guarded trial, and the Floor-2 construction site no longer clears it. Measured on a 12-core laptop
-  with an RTX 3050: roughly **0.90-0.92 headless**, and roughly **0.70 with the Gazebo GUI running**, so a guarded trial on that world aborts
-  immediately with `HARNESS GUARD FAILED - DO NOT RUN THE TRIAL`. Three things follow, and all three matter to anyone trying to reproduce
-  `results.md`:
-  - `HG_LOW_RTF` does **not** help. It relaxes only the health monitor's "two samples below this" clause during a run; `MIN_RTF` is a separate
-    module constant with no environment override, so the pre-trial check fails before the monitor is ever reached.
-  - This is a property of the world, not of the host being busy. `harness_guard.py`'s own comment records the Floor-2 world at a steady ~0.91 on
-    an idle host with a load average of ~6, against ~0.98 for the Floor-1-only world the 0.95 figure was calibrated on. Shrinking the GUI window
-    changes nothing measurably - the cost is physics and dual-LiDAR raycasting, not render resolution.
-  - **No filmed run of this world can be validation-grade on hardware of this class.** The recorded round trips in `recordings/` sustained 0.94
-    because they were captured on 2026-09-20, before the Floor-2 extension existed; the same capture on the current world costs substantially
-    more. This is a sharper version of the caveat `recordings/README.md` already makes.
+- **The clean-host guard refuses guarded trials on commodity hardware, and the cost is this project's own nodes rather than the world.**
+  `harness_guard.py`'s `MIN_RTF` is a hard gate of 0.95, checked before every guarded trial. Measured on a 12-core laptop with an RTX 3050, on
+  mains power: roughly **0.91-0.93 headless** and roughly **0.70 with the Gazebo GUI running**, so a guarded trial aborts immediately with
+  `HARNESS GUARD FAILED - DO NOT RUN THE TRIAL`. The ablation, server only unless stated:
+  - world alone, no robot and no sensors: **0.99-1.00**
+  - world plus the robot plus both LiDARs plus the bridge, no autonomy nodes: **0.998-1.000**
+  - the full stack: **0.91-0.93**
 
-  Not fixed, and deliberately not papered over by lowering `MIN_RTF`: the gate is doing exactly what it was built to do, which is refuse to
-  produce a number the project would then have to defend. The real fix is either a cheaper world (fewer collision shapes, cheaper LiDAR
-  raycasting) or an explicit, recorded decision to recalibrate the threshold for the Floor-2 world. Neither has been done. If you hit this,
-  please open an issue with the real-time factor your machine sustains - how widespread it is across hardware is not yet known.
+  So neither the construction-site world nor the sensors cost anything measurable. The shortfall is entirely the nodes, and they are dominated by
+  one unthrottled publisher. `gz-sim-joint-state-publisher-system` in `robot.urdf.xacro` carries no rate limit, so `/joint_states` publishes every
+  1 ms physics step, measured at **936 Hz**. `stability_monitor_node.py` recomputes wheel slip on each of those callbacks and republishes
+  `/wheel_slip` at **987 Hz**, which in turn wakes `state_machine_node.py` and `descent_brake_node.py`. Those four nodes plus the stall detector
+  come to about 183% CPU between them, more than the simulator itself, against 8.5% for Nav2's `controller_server`. By comparison `/imu` runs at
+  95.6 Hz and both LiDARs at about 9 Hz, exactly as declared.
+
+  Note that `architecture.md` describes the HALT triggers as checked "every IMU callback (~20 Hz)". That holds for the margin path. The slip path
+  runs roughly fifty times faster than that.
+
+  Two things that do **not** fix it, both tried: `HG_LOW_RTF`, which relaxes only the health monitor's in-run clause while `MIN_RTF` is a separate
+  module constant with no environment override; and adding `<update_rate>` to the joint state publisher plugin, which gz-sim appears to ignore
+  (`/joint_states` stayed at 758 Hz and the real-time factor did not move). A real fix has to be subscriber side, and it cannot be a smaller number
+  chosen by eye: `SLIP_HALT_PERSIST_S = 0.25` was calibrated against artefacts observed at the current rate, so changing how often slip is sampled
+  has to be re-validated against `halt_loop`'s own measurements.
+
+  **Power state matters more than any of this.** The same machine on battery, with the governor at `powersave` and the cores held near 1 GHz against
+  a 4.4 GHz maximum, runs the full stack at **0.48-0.51**. If you report a real-time factor, say whether the machine was plugged in.
 
 ## Standing scope boundaries
 

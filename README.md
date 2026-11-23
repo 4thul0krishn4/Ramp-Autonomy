@@ -457,9 +457,10 @@ logs, recordings). All of it regenerates by re-running these scripts.
 that.
 
 > [!WARNING]
-> The guard enforces a hard real-time-factor floor of 0.95, and the construction-site world no longer clears it on ordinary hardware (~0.90-0.92
-> headless, ~0.70 with the GUI up). A guarded trial there may refuse to start. That is the guard working as designed, not a broken checkout -
-> see [`known-limitations.md`](docs/known-limitations.md). Please open an issue with the real-time factor your machine sustains.
+> The guard enforces a hard real-time-factor floor of 0.95, and the full stack does not clear it on ordinary hardware (~0.91-0.93 headless,
+> ~0.70 with the GUI up), so a guarded trial may refuse to start. That is the guard working as designed, not a broken checkout. The cost is this
+> project's own nodes rather than the world or the sensors, and battery power roughly halves it again - see
+> [`known-limitations.md`](docs/known-limitations.md). Please open an issue with what your machine sustains, and say whether it was plugged in.
 
 </details>
 
