@@ -55,6 +55,25 @@ base, which produces a PR that only you can see - if it does not appear in
    stating what the file is for. C++ critic plugins follow the `nav2_mppi_controller` conventions they plug into.
 5. **One concern per PR.** A geometry fix and a controller retune are two PRs.
 
+## Tools, and what verification means here
+
+Use whatever helps you work, AI assistants included. The one thing asked in return is that you have
+run or read what you submit, before you submit it.
+
+That matters more in this repository than in most. The whole premise here is that a claim arrives with
+the evidence behind it, and `docs/retrospective.md` exists because four confident explanations in this
+project turned out to be wrong. A summary of a session nobody read, or a Dockerfile nobody built,
+costs a reviewer more time than it saved the author, and it quietly damages the thing that makes the
+rest of the documentation worth trusting.
+
+Verification is usually cheap. A Dockerfile needs `docker build .` and two minutes. A docs change
+needs reading the file it describes. A script change needs running it once. None of that requires a
+simulator or a robot.
+
+If you are unsure about part of it, say so in the pull request. "I believe this is right but I could
+not test the X part" is a genuinely useful sentence and will never count against you. Silence about an
+untested change is the only thing that does.
+
 ## Changes that need discussion first
 
 Open an issue before starting on:
