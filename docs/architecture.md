@@ -63,9 +63,14 @@ fires, through a completeness edge (`ASCENT and not on_ramp -> EXIT`) added as d
 actually interrupted, not unconditionally to `APPROACH` - the five `HALT -> *` edges above are one mechanism (`self._pre_halt_state`), not five
 separate rules.
 
-HALT itself is pre-emptable from any state and fires from three independent triggers, checked every IMU callback (~20 Hz, no separate slow-poll
-timer on either the publishing or consuming side): tip-over margin below threshold, wheel slip above threshold, or a confirmed motion stall. Any
-one is sufficient.
+HALT itself is pre-emptable from any state and fires from three independent triggers, checked on the callback that carries each signal rather
+than on a slow-poll timer: tip-over margin below threshold, wheel slip above threshold, or a confirmed motion stall. Any one is sufficient.
+
+The three do not run at the same rate, and the difference is larger than it looks. Measured live: `/imu` publishes at 95.6 Hz and both LiDARs at
+about 9 Hz, matching what the xacro declares, but `/joint_states` is published by `gz-sim-joint-state-publisher-system` with no rate limit, so it
+arrives every 1 ms physics step at about 936 Hz. `stability_monitor_node.py` recomputes slip on each of those and republishes `/wheel_slip` at
+about 987 Hz. So the margin path runs at IMU rate and the slip path runs roughly fifty times faster, which is where most of this project's CPU
+goes - see `known-limitations.md` for the measurements and for why the obvious rate limit does not work.
 
 ## Node and topic graph
 
