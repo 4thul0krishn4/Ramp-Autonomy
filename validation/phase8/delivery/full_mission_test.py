@@ -15,6 +15,8 @@ see validation/phase8/payload_chute/README.md for the verification that this is 
 Usage: full_mission_test.py <out.json>
 """
 import json, os, subprocess, sys, time
+if len(sys.argv) < 2:
+    raise SystemExit('usage: full_mission_test.py <out.json>')
 from pathlib import Path as _P
 
 sys.path.insert(0, str(_P(__file__).resolve().parents[1] / 'fsm_multiramp'))

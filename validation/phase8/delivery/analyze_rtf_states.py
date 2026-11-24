@@ -3,6 +3,8 @@
 Per state: per-run mean RTF (5 s windows over 100 s), then across valid runs: mean / min / max of the per-run means, the min and max of ALL 5 s windows, std and 95 % t-interval of the run means, and the
 convergence check (running mean of the run means within +-0.005 over the last 3 runs). Usage: analyze_rtf_states.py <dir>"""
 import glob, json, statistics as st, sys
+if len(sys.argv) < 2:
+    raise SystemExit('usage: analyze_rtf_states.py <dir>')
 T95 = {2: 4.30, 3: 3.18, 4: 2.78, 5: 2.57, 6: 2.45, 7: 2.36, 8: 2.31}
 d = sys.argv[1]; by = {}
 for f in sorted(glob.glob(f'{d}/*_r[0-9]*.json')):

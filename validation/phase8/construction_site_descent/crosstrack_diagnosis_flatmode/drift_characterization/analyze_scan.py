@@ -12,6 +12,8 @@ Detector algorithm being replicated (motion_stall_detector_node.py):
     the scan shows no movement (then holds >= 10 s)
 """
 import sys, csv, math, ast
+if len(sys.argv) < 3:
+    raise SystemExit('usage: analyze_scan.py <scan.npz> <trial_row.csv>')
 import numpy as np
 
 NPZ, ROWCSV = sys.argv[1], sys.argv[2]
