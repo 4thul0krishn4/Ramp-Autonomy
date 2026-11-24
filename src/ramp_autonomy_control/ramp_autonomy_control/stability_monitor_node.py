@@ -145,12 +145,12 @@ class StabilityMonitor(Node):
         base_height = self.get_parameter('base_height_m').value
 
         return compute_pitch_margin(
-            pitch_rad,
-            payload_mass,
-            payload_cg,
-            wheelbase,
-            base_mass,
-            base_height,
+            pitch_rad=pitch_rad,
+            payload_mass=payload_mass,
+            payload_cg=payload_cg,
+            wheelbase=wheelbase,
+            base_mass=base_mass,
+            base_height=base_height,
         )
 
     def _compute_wheel_slip(self, joint_state: JointState) -> float:
