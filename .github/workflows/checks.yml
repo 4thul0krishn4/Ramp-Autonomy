@@ -39,6 +39,9 @@ jobs:
           done < <(git ls-files '*.py')
           exit $fail
 
+      - name: Validation usage tests
+        run: python -m unittest validation/test_usage_messages.py -v
+
       - name: Shell scripts parse
         run: |
           fail=0
