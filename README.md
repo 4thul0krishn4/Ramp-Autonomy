@@ -523,7 +523,9 @@ of them need no simulator at all. The highest-value ten minutes you can spend is
 widespread that is across hardware is genuinely unknown.
 
 **Have a real robot and a ramp?** See [the sim-to-real collaboration request](../../issues/11). That is the single biggest gap in this project,
-and it is not one I can close in simulation.
+and it is not one I can close in simulation. [docs/hardware-test-plan.md](docs/hardware-test-plan.md) sets out what a first session
+actually involves, including the five measurements needed from the robot, what the ramp should look like, and the one thing in this
+stack that has to be fixed before it goes anywhere near a real slope.
 
 Start with **[CONTRIBUTING.md](CONTRIBUTING.md)**. The one thing it asks above all else:
 
