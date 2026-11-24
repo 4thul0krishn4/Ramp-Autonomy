@@ -56,6 +56,8 @@ from rclpy.node import Node
 from sensor_msgs.msg import Imu, JointState
 from std_msgs.msg import Float32
 
+from .stability_margin import compute_pitch_margin
+
 # Which side of the robot each wheel joint is on, for deriving its
 # commanded angular velocity from the body twist (matches DiffDrive's own
 # <left_joint>/<right_joint> grouping in robot.urdf.xacro).
@@ -142,28 +144,14 @@ class StabilityMonitor(Node):
         base_mass = self.get_parameter('base_mass_kg').value
         base_height = self.get_parameter('base_height_m').value
 
-        total_mass = base_mass + payload_mass
-        if total_mass <= 0:
-            return 1.0
-
-        # Combined CG offset from base_link origin (base assumed centered at 0)
-        combined_cg_x = (payload_mass * payload_cg) / total_mass
-
-        # Effective forward support limit shrinks as pitch increases:
-        # projecting the half-wheelbase onto the incline-adjusted plane.
-        half_wheelbase = wheelbase / 2.0
-        # Height of combined CG above ground (rough estimate)
-        cg_height = base_height / 2.0 + (0.15 if payload_mass > 0 else 0.0)
-
-        # Additional CG shift induced by pitch itself (rigid body on incline):
-        # a CG at height h, on a surface pitched by theta, has its
-        # effective horizontal position shifted by h * tan(theta).
-        pitch_induced_shift = cg_height * math.tan(abs(pitch_rad))
-
-        effective_cg_x = abs(combined_cg_x) + pitch_induced_shift
-
-        margin = 1.0 - (effective_cg_x / half_wheelbase)
-        return max(0.0, min(1.0, margin))
+        return compute_pitch_margin(
+            pitch_rad,
+            payload_mass,
+            payload_cg,
+            wheelbase,
+            base_mass,
+            base_height,
+        )
 
     def _compute_wheel_slip(self, joint_state: JointState) -> float:
         """
