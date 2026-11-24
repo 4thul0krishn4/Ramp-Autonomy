@@ -13,6 +13,8 @@ the old mount. Predicted here, then checked against the live /scan_360 below (ve
   side:   nearest point (0.85,-0.85) -> range 0.648 m, bearing atan2(-0.63,0.15) = -76.6 deg
 Usage: obstacle_lidar_check_corner.py <out.json>"""
 import json, math, statistics, sys, time
+if len(sys.argv) < 2:
+    raise SystemExit('usage: obstacle_lidar_check_corner.py <out.json>')
 import numpy as np
 import rclpy
 from rclpy.node import Node

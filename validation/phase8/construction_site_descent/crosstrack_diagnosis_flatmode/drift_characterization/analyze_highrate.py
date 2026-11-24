@@ -4,6 +4,8 @@ slip reading an onset-lag / small-denominator artifact, and do brief slip
 HALTs feed the LiDAR stall latch. Usage: analyze_highrate.py <highrate.csv> <trial_row.csv>
 """
 import sys, csv, math
+if len(sys.argv) < 3:
+    raise SystemExit('usage: analyze_highrate.py <highrate.csv> <trial_row.csv>')
 import numpy as np
 import pandas as pd
 
