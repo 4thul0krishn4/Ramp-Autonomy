@@ -9,8 +9,8 @@ Records, for the whole cell (ascent, the open-loop 180-degree turn, the descent 
 and the wall-clock time at which the test logs 'descent path:' (the moment the descent goal is sent).
 Usage: descent_diag.py <label> <gz_world_name> <out.npz>
 """
-RAMP_WS = os.environ['RAMP_WS']
 import json, math, os, subprocess, sys, threading, time
+RAMP_WS = os.environ['RAMP_WS']
 import numpy as np
 import rclpy
 from rclpy.node import Node

@@ -12,8 +12,8 @@ Decision rule fixed BEFORE the original-detector runs: the detector is 'implicat
 otherwise 'not distinguishable'. Power is reported honestly: with 6 vs 6, only a difference such as 6/6 vs <=1/6
 failing is detectable. Ground-truth fail = max |y| beyond the 1.5 m panel half-width (the matrix's own verdict).
 """
+import sys, re, glob, json, math, itertools, random, os
 RAMP_WS = os.environ['RAMP_WS']
-import sys, re, glob, json, math, itertools, random
 import numpy as np
 
 P8 = os.path.join(RAMP_WS, 'validation/phase8')
@@ -45,7 +45,6 @@ def group_original():
     for f in sorted(glob.glob(f'{P8}/curved_unloaded_origdet_logs/curved_unloaded_normal_orig_r*_result.log'),
                     key=lambda x: int(re.search(r'_r(\d+)_result', x).group(1))):
         b = f[:-len('_result.log')]
-        import os
         if not os.path.exists(b + '_health.json') or 'overall_verdict:' not in open(f).read():
             continue                      # run still in progress
         d.append(read(f, b + '_launch.log', b + '_health.json'))

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Completion analysis of the post-geometry-fix reverification samples. Completion = ascent PASS (ground-truth verified) AND the descent reached the ramp foot
 (final ground-truth x <= 5.0 m and z <= 0.5 m) AND max |y| <= 1.5 m. Usage: analyze_reverify.py [--runs]"""
-RAMP_WS = os.environ['RAMP_WS']
 import sys, os, re, glob, json
+RAMP_WS = os.environ['RAMP_WS']
 import numpy as np
 sys.path.insert(0, os.path.join(RAMP_WS, 'validation/phase8'))
 import compare_detectors_curved_unloaded as C

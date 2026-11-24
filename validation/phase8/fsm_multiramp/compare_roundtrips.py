@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Compare Floor-1-only round trips: OLD-FSM runs (floor2/ final-world runs + run1_before_fence_fix) vs NEW-FSM runs (run3_regression): driver metrics + the /ramp_state sequence (from the CSVs' state column)."""
-RAMP_WS = os.environ['RAMP_WS']
 import csv, re, sys, os
+RAMP_WS = os.environ['RAMP_WS']
 B = os.path.join(RAMP_WS, 'validation/phase8')
 def seq(csvp):
     out = []

@@ -2,8 +2,8 @@
 """Compare a structural-path arm (curved / normal / unloaded) against the three baselines with the project's statistics.
 Usage: analyze_arm.py <label> <dir> <prefix> [<label2> <dir2> <prefix2> ...]
 Failure = ground-truth max|y| > 1.5 m. Baselines (same instrument): original 0/6, fixed 10/10, scoped 5/14."""
-RAMP_WS = os.environ['RAMP_WS']
 import sys, os, re, math, glob
+RAMP_WS = os.environ['RAMP_WS']
 import numpy as np
 from scipy import stats
 sys.path.insert(0, os.path.join(RAMP_WS, 'validation/phase8'))
